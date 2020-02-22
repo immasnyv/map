@@ -566,6 +566,14 @@
 	text-rendering: optimizeLegibility;
 }
 
+#map .map__wc_text {
+	font-size: 20px;
+	stroke: #0f0f0f;
+	text-anchor: middle;
+	dominant-baseline: middle;
+	text-rendering: optimizeLegibility;
+}
+
 /* Level canvases */
 #map .level__canvas {
 	position: absolute;

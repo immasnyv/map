@@ -28,27 +28,6 @@ function Navigation(mapJSON, mapNodesJSON) {
             this.canvas[i].imageSmoothingEnabled = true;
             this.canvas[i].beginPath();
         }
-
-        this.drawMapPlaces();
-    }
-
-    var img_wc = new Image();
-	
-	this.drawMapPlaces = function() {
-		img_wc.onload = function () {
-			_this.canvas[0].drawImage(img_wc, 560, 35);
-			_this.canvas[0].drawImage(img_wc, 687, 495);
-			
-			_this.canvas[1].drawImage(img_wc, 555, 35);
-			_this.canvas[1].drawImage(img_wc, 50, 485);
-			_this.canvas[1].drawImage(img_wc, 450, 485);
-			
-			_this.canvas[2].drawImage(img_wc, 555, 35);
-			_this.canvas[2].drawImage(img_wc, 50, 485);
-			_this.canvas[2].drawImage(img_wc, 450, 485);
-        };
-
-		img_wc.src = 'wc.svg';
     }
 
     this.clearCanvas = function() {
@@ -206,7 +185,6 @@ function Navigation(mapJSON, mapNodesJSON) {
 					_this.canvas[_this.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
 					_this.canvas[_this.currentLevel - 1].stroke();
 					_this.canvas[_this.currentLevel - 1].fill();
-					//_this.canvas[_this.currentLevel - 1].drawImage(img_stairs, node.x - 16, 800 - node.y - 16);
                     
                     _this.mapHandler.setStairsPinPosition(node.x, 800 - node.y, _this.currentLevel + stairs)
 					_this.mapHandler.showStairsPin(_this.currentLevel - 1 + stairs);
@@ -219,7 +197,6 @@ function Navigation(mapJSON, mapNodesJSON) {
 				_this.canvas[_this.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
 				_this.canvas[_this.currentLevel - 1].stroke();
 				_this.canvas[_this.currentLevel - 1].fill();
-				//_this.canvas[_this.currentLevel - 1].drawImage(img_stairs, node.x - 16, 800 - node.y - 16);
 				
                 var wait = true;
             }
@@ -311,9 +288,9 @@ function Navigation(mapJSON, mapNodesJSON) {
         this.mapHandler.unhighlightRoom(this.endNode.room);
     }
 
-    this.indicateRoom = function(room, color, text) {
+    this.indicateRoom = function(room, color, text, textClass) {
         this.mapHandler.showRoom(room, color);
-        this.mapHandler.writeOnRoom(room, this.map[room].level, text);
+        this.mapHandler.writeOnRoom(room, this.map[room].level, text, textClass);
     }
 
     this.showRoom = function(room) {
@@ -336,5 +313,4 @@ function Navigation(mapJSON, mapNodesJSON) {
     }
 
     _this = this;
-	this.initCanvas();
 }

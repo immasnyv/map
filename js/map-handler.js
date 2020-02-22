@@ -166,21 +166,56 @@ function MapHandler() {
         return {x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height};
     }
 
-    this.writeOnRoom = function(room, level, text) {
-        let dims = this.getRoomDimensions(room);
+    this.writeOnRoom = function(rooms, level, text, textClass) {
+        var centerX = 0, centerY = 0;
 
-        let centerX = Math.round(dims.x + dims.width / 2);
-        let centerY = Math.round(dims.y + dims.height / 2);
+        if(Array.isArray(rooms)) {
+            var centersPosition = [];
+
+            rooms.forEach(room => {
+                let dims = this.getRoomDimensions(room);
+                centersPosition.push({ x: Math.round(dims.x + dims.width / 2), y: Math.round(dims.y + dims.height / 2)});
+            });
+
+            centersPosition.forEach(center => {
+                centerX += center.x;
+                centerY += center.y;
+            });
+
+            centerX /= centersPosition.length;
+            centerY /= centersPosition.length;
+        } else {
+            let dims = this.getRoomDimensions(rooms);
+
+            centerX = Math.round(dims.x + dims.width / 2);
+            centerY = Math.round(dims.y + dims.height / 2);
+        }
 
         let newText = document.createElementNS("http://www.w3.org/2000/svg", "text");
         newText.setAttributeNS(null, "x", centerX);
         newText.setAttributeNS(null, "y", centerY);
-        newText.setAttributeNS(null, "class", "map__text");
+        newText.setAttributeNS(null, "class", textClass);
 
         let textNode = document.createTextNode(text);
         newText.appendChild(textNode);
         
         document.querySelector('#gLevel' + level).appendChild(newText);
+    }
+
+    this.drawMapPlaces = function() {
+        let text = 'WC';
+
+        this.writeOnRoom([11, 14], 1, text, "map__wc_text");
+        this.writeOnRoom([108, 131, 133], 1, text, "map__wc_text");
+        this.writeOnRoom(126, 1, text, "map__wc_text");
+
+        this.writeOnRoom([207, 221, 223], 2, text, "map__wc_text");
+        this.writeOnRoom([200, 201], 2, text, "map__wc_text");
+        this.writeOnRoom(219, 2, text, "map__wc_text");
+
+        this.writeOnRoom([300, 301], 3, text, "map__wc_text");
+        this.writeOnRoom(320, 3, text, "map__wc_text");
+        this.writeOnRoom([307, 321, 323], 3, text, "map__wc_text");
     }
 
     //******  Map Surroundings appearence handling ******
@@ -242,4 +277,6 @@ function MapHandler() {
             _this.isNavigating = false;
         });
     }*/
+
+    this.drawMapPlaces();
 }
