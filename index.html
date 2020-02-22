@@ -1176,7 +1176,7 @@
 									width="26.391758"
 									y="63.0037"
 									x="555.34125"
-									class="map__space map__wc"
+									class="map__space"
 									id="322" />
 								<g
 									id="g17765"
@@ -1475,8 +1475,9 @@
 				});
 
 				var levels = document.querySelector('.levels');
+				var minX = parseInt(getComputedStyle(document.getElementById('map')).getPropertyValue('--map-rotateX'));
 				var drag = false, x0 = null, y0 = null;
-				var rotX = 0, rotY = 0, rotAngle = 0;
+				var rotX = 0, rotY = 0;
 
 				function getE(ev) {
 					return ev.touches ? ev.touches[0] : ev
@@ -1490,7 +1491,8 @@
 					y0 = e.clientY;
 				};
 
-				const A = 0.5;
+				const Ax = 0.25;
+				const Ay = 0.25;
 
 				function rotate(ev) {
 					if(drag) {
@@ -1500,18 +1502,14 @@
 							d = Math.hypot(dx, dy);
 							
 						if(d) {
-							rotAngle = A*d;
-							rotY += (-dy) * rotAngle;
-							rotX += dx * rotAngle;
-							rotZ += dz * rotAngle;
+							rotX = Math.min(Math.max(rotX + (-dy) * Ax, -minX), 90 - minX); // rotace kolem osy X je posun v y
+							rotY += (-dx) * Ay;
 
 							x0 = x;
 							y0 = y;
 
-							//levels.style.setProperty('--p', getComputedStyle(_C).transform.replace('none', ''));
-							levels.style.setProperty('--x', (rotY).toFixed(2) + 'deg');
-							levels.style.setProperty('--y', (rotX).toFixed(2) + 'deg');
-							//levels.style.setProperty('--z', (rotZ).toFixed(2) + 'deg');
+							levels.style.setProperty('--x', (rotX).toFixed(2) + 'deg');
+							levels.style.setProperty('--y', (rotY).toFixed(2) + 'deg');
 						}
 					}
 				};
