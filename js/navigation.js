@@ -1,5 +1,4 @@
-
-function Navigation(mapJSON, mapNodesJSON) {
+function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
     // ******  Init  ******
     this.init = function() {
@@ -19,7 +18,7 @@ function Navigation(mapJSON, mapNodesJSON) {
      * Initializate style of all canvases.
      */
     this.initCanvas = function() {
-        for (let i = 0; i <= 2; i++) {
+        for (let i = 0; i <= mapHandler.schoolLevelsTotal - 1; i++) {
             this.canvas[i].lineWidth = 10;
             this.canvas[i].lineCap = 'round';
             this.canvas[i].lineJoin = 'round';
@@ -43,22 +42,21 @@ function Navigation(mapJSON, mapNodesJSON) {
 
     // Find way from startNode (<x) to endNode (>x) and store result into nodeChain[]
     this.computePath = function() {
+        // every time navigation is started, new fresh nodeMap must be loaded (otherwise there will be relations with previously used nodes)
         this.mNodeMap = new NodeMap(mapNodesJSON);
         // add <x start node to mNodeMap
-        //this.mNodeMap.removeNode(_this.startNode.name);
-        this.mNodeMap.addNodeByPosition(_this.startNode.name, _this.startNode.x, _this.startNode.y, _this.startNode.level);
+        this.mNodeMap.addNodeByPosition(this_nav.startNode.name, this_nav.startNode.x, this_nav.startNode.y, this_nav.startNode.level);
         // add >x end node to mNodeMap
-        //this.mNodeMap.removeNode(_this.endNode.name);
-        this.mNodeMap.addNodeByPosition(_this.endNode.name, _this.endNode.x, _this.endNode.y, _this.endNode.level);
+        this.mNodeMap.addNodeByPosition(this_nav.endNode.name, this_nav.endNode.x, this_nav.endNode.y, this_nav.endNode.level);
 
         // calculate path using djikstra algorithm
         let djikstra = new Djikstra();
-        let result = djikstra.calculate(this.mNodeMap.nodes, _this.startNode.name);
+        let result = djikstra.calculate(this.mNodeMap.nodes, this_nav.startNode.name);
 
-        this.nodeChain = result.shortestPaths[_this.endNode.name]; // shortest path to end node
-        let pathDistance = Math.round(result.shortestDistances[_this.endNode.name] / 9); // distance to end node
+        this.nodeChain = result.shortestPaths[this_nav.endNode.name]; // shortest path to end node
+        let pathDistance = Math.round(result.shortestDistances[this_nav.endNode.name] / 9); // distance to end node
 
-        // simplify path (delete nodes, where the line goes in 180� angle)
+        // simplify path (delete nodes, where the line goes in 180° angle) - fix for issue causing slowdowns on straight path
         for(let i = 1; i < this.nodeChain.length - 1; i++) {
             if(this.nodeChain[i].includes("S")) {
                 continue;
@@ -80,7 +78,7 @@ function Navigation(mapJSON, mapNodesJSON) {
 
     // ******  Path drawing functions  ******
 
-    this.mapHandler = new MapHandler();
+    //mapHandler = new MapHandler();
     this.ANIM_SPEED = 192;
     this.REND_FPS = 60; // fps - default value
 
@@ -90,51 +88,51 @@ function Navigation(mapJSON, mapNodesJSON) {
         this.lineIndex = 0;
         this.lineWaypoints = [];
 
-        this.mapHandler.resetLevelsTransparency();
+        mapHandler.resetLevelsTransparency();
     }
 
     this.startNavigation = function() {
-        // make level above startNode/endNode transparent if path and/or here/target pin couldn't be seen throught it
-        if (/*_this.startNode.y > 510 &&*/ _this.startNode.level < 3) {
-            _this.mapHandler.makeLevelTransparent(_this.startNode.level);
+        // make level above startNode/endNode's level transparent if there's chance that the path and/or here/target pin couldn't be seen throught it
+        if (/*this_nav.startNode.y > 510 &&*/ this_nav.startNode.level < 3) {
+            mapHandler.makeLevelTransparent(this_nav.startNode.level);
         }
-        if (/*_this.endNode.y > 510 &&*/ _this.endNode.level < 3) {
-            _this.mapHandler.makeLevelTransparent(_this.endNode.level);
+        if (/*this_nav.endNode.y > 510 &&*/ this_nav.endNode.level < 3) {
+            mapHandler.makeLevelTransparent(this_nav.endNode.level);
         }
 
         // highlight start room
-        _this.mapHandler.highlightRoom(_this.startNode.room);
+        mapHandler.highlightRoom(this_nav.startNode.room);
 
         // show here pin with hint
-        this.mapHandler.showHerePin(_this.startNode);
-        this.mapHandler.showHereHint(_this.startNode.level - 1);
+        mapHandler.showHerePin(this_nav.startNode);
+        mapHandler.showHereHint(this_nav.startNode.level - 1);
 
         setTimeout(function() {
-            _this.mapHandler.removeHereHint(_this.startNode.level - 1);
-            _this.startPathDrawing();
-            _this.runNavigation();
+            mapHandler.removeHereHint(this_nav.startNode.level - 1);
+            this_nav.startPathDrawing();
+            this_nav.runNavigation();
         }, 1500);
     }
 
     this.runNavigation = function() {
-        _this.t1 = performance.now();
+        this_nav.t1 = performance.now();
 
-        if (_this.nodeChainIndex >= _this.nodeChain.length) {
-            _this.endPathDrawing();
+        if (this_nav.nodeChainIndex >= this_nav.nodeChain.length) {
+            this_nav.endPathDrawing();
             return;
         }
 
-        _this.drawPathPoint();
+        this_nav.drawPathPoint();
     }
 
     // Start drawing the path. Draw start dot and then move cursor to startNode.
     this.startPathDrawing = function() {
-        this.canvas[_this.startNode.level - 1].arc(_this.startNode.x, 800 - _this.startNode.y, 10, 0, 2 * Math.PI, 0); // make startNode dot
-        this.canvas[_this.startNode.level - 1].stroke();
-        this.canvas[_this.startNode.level - 1].moveTo(_this.startNode.x, 800 - _this.startNode.y); // move cursor to startNode
+        this.canvas[this_nav.startNode.level - 1].arc(this_nav.startNode.x, 800 - this_nav.startNode.y, 10, 0, 2 * Math.PI, 0); // make startNode dot
+        this.canvas[this_nav.startNode.level - 1].stroke();
+        this.canvas[this_nav.startNode.level - 1].moveTo(this_nav.startNode.x, 800 - this_nav.startNode.y); // move cursor to startNode
 
         this.line = { linePosition: 0 };
-        _this.t0 = null;
+        this_nav.t0 = null;
     }
 
     // ----------------
@@ -144,104 +142,107 @@ function Navigation(mapJSON, mapNodesJSON) {
     }
 
     this.drawPathPoint = function() {
-        if(_this.t0 != null && _this.t1 != null) {
-            _this.REND_FPS = 1000 / (_this.t1 - _this.t0);
-            //console.log(_this.REND_FPS);
+        if(this_nav.t0 != null && this_nav.t1 != null) {
+            this_nav.REND_FPS = 1000 / (this_nav.t1 - this_nav.t0);
+            //console.log(this_nav.REND_FPS);
 
-            if(_this.REND_FPS > 240) {
-                _this.REND_FPS = 240;
+            if(this_nav.REND_FPS > 240) {
+                this_nav.REND_FPS = 240;
             }
         }
 
-        if (_this.line.linePosition == 0) {
-            _this.line.node0 = _this.mNodeMap.nodes[this.nodeChain[_this.nodeChainIndex - 1]];
-            _this.line.node1 = _this.mNodeMap.nodes[this.nodeChain[_this.nodeChainIndex]];
-            _this.line.dx = _this.line.node1.x - _this.line.node0.x;
-            _this.line.dy = _this.line.node1.y - _this.line.node0.y;
-            _this.line.c = Math.round(Math.sqrt(Math.pow(_this.line.dx, 2) + Math.pow(_this.line.dy, 2)));
+        if (this_nav.line.linePosition == 0) {
+            this_nav.line.node0 = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex - 1]];
+            this_nav.line.node1 = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]];
+            this_nav.line.dx = this_nav.line.node1.x - this_nav.line.node0.x;
+            this_nav.line.dy = this_nav.line.node1.y - this_nav.line.node0.y;
+            this_nav.line.c = Math.round(Math.sqrt(Math.pow(this_nav.line.dx, 2) + Math.pow(this_nav.line.dy, 2)));
         }
 
-        _this.line.linePosition = (_this.line.linePosition + (_this.ANIM_SPEED / _this.REND_FPS));
-        if(_this.line.linePosition > _this.line.c) _this.line.linePosition = _this.line.c;
-        let linePercent = _this.line.linePosition / _this.line.c;        
+        this_nav.line.linePosition = (this_nav.line.linePosition + (this_nav.ANIM_SPEED / this_nav.REND_FPS));
+        if(this_nav.line.linePosition > this_nav.line.c) this_nav.line.linePosition = this_nav.line.c;
+        let linePercent = this_nav.line.linePosition / this_nav.line.c;        
 
-        let x = _this.line.node0.x + _this.line.dx * _this.easeInOutCubic(linePercent);
-        let y = _this.line.node0.y + _this.line.dy * _this.easeInOutCubic(linePercent);
+        let x = this_nav.line.node0.x + this_nav.line.dx * this_nav.easeInOutCubic(linePercent);
+        let y = this_nav.line.node0.y + this_nav.line.dy * this_nav.easeInOutCubic(linePercent);
 
-        _this.canvas[_this.currentLevel - 1].lineTo(x, 800 - y); // y axis in json is inverted
-        _this.canvas[_this.currentLevel - 1].stroke();
+        this_nav.canvas[this_nav.currentLevel - 1].lineTo(x, 800 - y); // y axis in json (from Inkscape) is inverted
+        this_nav.canvas[this_nav.currentLevel - 1].stroke();
 
         if (linePercent >= 1) {
-            _this.line.linePosition = 0;
+            this_nav.line.linePosition = 0;
 
-            if (this.nodeChain[_this.nodeChainIndex].includes("S")) {
-                let node = _this.mNodeMap.nodes[this.nodeChain[_this.nodeChainIndex]];
-                let newLevel = this.nodeChain[_this.nodeChainIndex + 1][1];
-				let stairs = (newLevel < _this.currentLevel) ? -1 : 0;
+            if (this.nodeChain[this_nav.nodeChainIndex].includes("S")) {
+                let node = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]];
+                let newLevel = this.nodeChain[this_nav.nodeChainIndex + 1][1];
+				let stairs = (newLevel < this_nav.currentLevel) ? -1 : 0;
 
                 do {
-					_this.canvas[_this.currentLevel - 1].moveTo(node.x, 800 - node.y);
-					_this.canvas[_this.currentLevel - 1].beginPath();
-					_this.canvas[_this.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
-					_this.canvas[_this.currentLevel - 1].stroke();
-					_this.canvas[_this.currentLevel - 1].fill();
+					this_nav.canvas[this_nav.currentLevel - 1].moveTo(node.x, 800 - node.y);
+					this_nav.canvas[this_nav.currentLevel - 1].beginPath();
+					this_nav.canvas[this_nav.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
+					this_nav.canvas[this_nav.currentLevel - 1].stroke();
+					this_nav.canvas[this_nav.currentLevel - 1].fill();
                     
-                    _this.mapHandler.setStairsPinPosition(node.x, 800 - node.y, _this.currentLevel + stairs)
-					_this.mapHandler.showStairsPin(_this.currentLevel - 1 + stairs);
+                    mapHandler.setStairsPinPosition(node.x, 800 - node.y, this_nav.currentLevel + stairs)
+					mapHandler.showStairsPin(this_nav.currentLevel - 1 + stairs);
 					
-					_this.currentLevel = (newLevel > _this.currentLevel) ? (_this.currentLevel + 1) : (_this.currentLevel - 1);
-                } while (_this.currentLevel != newLevel);
+					this_nav.currentLevel = (newLevel > this_nav.currentLevel) ? (this_nav.currentLevel + 1) : (this_nav.currentLevel - 1);
+                } while (this_nav.currentLevel != newLevel);
 				
-				_this.canvas[_this.currentLevel - 1].moveTo(node.x, 800 - node.y);
-				_this.canvas[_this.currentLevel - 1].beginPath();
-				_this.canvas[_this.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
-				_this.canvas[_this.currentLevel - 1].stroke();
-				_this.canvas[_this.currentLevel - 1].fill();
+				this_nav.canvas[this_nav.currentLevel - 1].moveTo(node.x, 800 - node.y);
+				this_nav.canvas[this_nav.currentLevel - 1].beginPath();
+				this_nav.canvas[this_nav.currentLevel - 1].arc(node.x, 800 - node.y, 5, 0, 2 * Math.PI, 0); // make stairs dot
+				this_nav.canvas[this_nav.currentLevel - 1].stroke();
+				this_nav.canvas[this_nav.currentLevel - 1].fill();
 				
                 var wait = true;
             }
 
-            _this.nodeChainIndex++;
+            this_nav.nodeChainIndex++;
         }
 
         if (!wait) {
-            requestAnimationFrame(_this.runNavigation);
-            _this.t0 = performance.now();
+            requestAnimationFrame(this_nav.runNavigation);
+            this_nav.t0 = performance.now();
         } else {
-            setTimeout(_this.runNavigation, 500);
-            _this.t0 = null;
+            setTimeout(this_nav.runNavigation, 500);
+            this_nav.t0 = null;
         }
     }
 
     //----------
 
     this.endPathDrawing = function() {
-        _this.canvas[_this.currentLevel - 1].arc(_this.endNode.x, 800 - _this.endNode.y, 10, 0, 2 * Math.PI, 0); // make target dot
-        _this.canvas[_this.currentLevel - 1].stroke();
+        this_nav.canvas[this_nav.currentLevel - 1].arc(this_nav.endNode.x, 800 - this_nav.endNode.y, 10, 0, 2 * Math.PI, 0); // make target dot
+        this_nav.canvas[this_nav.currentLevel - 1].stroke();
 
-        /* TIP: p�idat do pinu ikonku funkce m�stnosti */
+        /* TIP: přidat do pinu ikonku funkce místnosti */
         // highlight target room
-        _this.mapHandler.highlightRoom(_this.endNode.room);
+        mapHandler.highlightRoom(this_nav.endNode.room);
 
-        _this.mapHandler.showTargetPin(_this.endNode);
-        _this.mapHandler.showTargetHint(_this.endNode.level - 1);
+        mapHandler.showTargetPin(this_nav.endNode);
+        mapHandler.showTargetHint(this_nav.endNode.level - 1);
 
-        _this.setNavigatingState(false);
+        this_nav.setNavigatingState(false);
 
         /*setTimeout(function() {
-            _this.mapHandler.removeTargetHint(_this.endNode.level - 1);
+            mapHandler.removeTargetHint(this_nav.endNode.level - 1);
         }, 1500);*/
     }
 
-    // ---------------------   Main function  --------------------
-    this.map = mapJSON;
+    this.setNavigatingState = function(state) {
+        if(!state) setTimeout(function() {this_nav.listener(state)}, 1000);
+    }
+
+    // ******  Main control functions  ******
     this.listener = function(val) {};
 
     this.navigate = function(endRoom, startRoom=0, primaryColor='#4caf50') {
         this.setNavigatingState(true);
 
-        let startRoomInfo = this.map[startRoom] || null;        
-        let endRoomInfo = this.map[endRoom] || null;
+        let startRoomInfo = mapJSON[startRoom] || null;        
+        let endRoomInfo = mapJSON[endRoom] || null;
 
         if(startRoomInfo == null || endRoomInfo == null || startRoomInfo.enabled == false || endRoomInfo.enabled == false) {
             return -1;
@@ -251,17 +252,17 @@ function Navigation(mapJSON, mapNodesJSON) {
         this.endNode = {name: ">" + endRoomInfo.level, x: endRoomInfo.x, y: endRoomInfo.y, level: endRoomInfo.level, room: endRoom};
 
         // set color scheme
-        this.mapHandler.setPrimaryColor(primaryColor);
+        mapHandler.setPrimaryColor(primaryColor);
         this.accentColor = primaryColor;
 
         // configure start and end pins
-        this.mapHandler.setTargetHintText(this.endNode.level - 1, endRoom);
+        mapHandler.setTargetHintText(this.endNode.level - 1, endRoom);
 
         this.init();
         let pathDist = this.computePath();
 
-        document.querySelector(".info .room").innerHTML = endRoom;
-        document.querySelector(".info .steps").innerHTML = pathDist;
+        /*document.querySelector(".info .room").innerHTML = endRoom;
+        document.querySelector(".info .steps").innerHTML = pathDist;*/
 
         this.startNavigation();	
 
@@ -271,46 +272,34 @@ function Navigation(mapJSON, mapNodesJSON) {
     this.registerListener = function(listener) {
         this.listener = listener;
     }
-    
-    this.setNavigatingState = function(state) {
-        if(!state) setTimeout(function() {_this.listener(state)}, 1000);
-    }
 
     this.clear = function() {
         if(typeof this.startNode === 'undefined' || typeof this.endNode === 'undefined')
             return;
 
         this.clearCanvas();
-        this.mapHandler.removePins(this.startNode, this.endNode);
+        mapHandler.removePins(this.startNode, this.endNode);
 
-        this.init();
-        this.mapHandler.unhighlightRoom(this.startNode.room);
-        this.mapHandler.unhighlightRoom(this.endNode.room);
+        mapHandler.unhighlightRoom(this.startNode.room);
+        mapHandler.unhighlightRoom(this.endNode.room);
     }
-
-    this.indicateRoom = function(room, color, text, textClass) {
-        this.mapHandler.showRoom(room, color);
-        this.mapHandler.writeOnRoom(room, this.map[room].level, text, textClass);
-    }
-
+    
     this.showRoom = function(room) {
-        let node = this.map[room];
+        let node = mapJSON[room];
 
-        this.mapHandler.highlightRoom(room);
-        this.mapHandler.showTargetPin(node);
-        this.mapHandler.setTargetHintText(node.level - 1, room);;
-        this.mapHandler.showTargetHint(node.level - 1);
+        mapHandler.highlightRoom(room);
+        mapHandler.showTargetPin(node);
+        mapHandler.setTargetHintText(node.level - 1, room);;
+        mapHandler.showTargetHint(node.level - 1);
     }
 
     this.hideRoom = function(room) {
-        let node = this.map[room];
+        let node = mapJSON[room];
 
-        this.mapHandler.unhighlightRoom(room);
-        this.mapHandler.removeTargetPin(node);        
-        setTimeout(function() {
-            _this.mapHandler.removeTargetHint(node.level - 1);
-        }, 200);
+        mapHandler.unhighlightRoom(room);
+        mapHandler.removeTargetPin(node);
+        mapHandler.removeTargetHint(node.level - 1);
     }
 
-    _this = this;
+    this_nav = this;
 }

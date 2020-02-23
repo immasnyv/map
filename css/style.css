@@ -1,4 +1,6 @@
-
+body {
+	margin: 0;
+}
 
 /***************/
 /* Main Layout */
@@ -104,11 +106,13 @@
 	padding: 12px;
 	margin-right: 20px;
 
+	cursor: pointer;
+
 	width: 24px;
 	height: 24px;
 }
 
-#map .mode-icon:hover{
+#map .mode-icon:hover {
 	background: var(--map-dark-primary-color);
 }
 
@@ -118,7 +122,7 @@
 
 #map .mode-text {
 	color: var(--map-text-color);
-	font-size: 80%;
+	font-size: 100%;
 	background: var(--map-primary-color);
 	border-radius: 10px;
 	padding: 10px;
@@ -276,8 +280,8 @@
 /***************/
 /* Map info bar */
 /***************/
-
-#map .info {
+/*! - TV version only */
+/*#map .info {
 	position: absolute;
 	left: 50%;
 	top: 10%;
@@ -319,7 +323,7 @@
 	margin-right: 12px;
 
 	fill: var(--map-text-color);
-}
+}*/
 
 /***************/
 /* Map  Layout */
@@ -340,7 +344,6 @@
 	transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-#map .surroundings,
 #map .levels {
 	position: absolute;
 	top: 50%;

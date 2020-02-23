@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html class="no-js">
+<html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,11 +8,9 @@
 		<meta name="author" content="Vojtěch Masný" />
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-		<!--<link rel="stylesheet" type="text/css" href="css/normalize.css" />-->
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
-		<!--<script src="js/modernizr-custom--.js"></script>-->
 	</head>
-	<body onload="loaded()" style="margin: 0">
+	<body onload="loaded()">
 		<div id="map">
             <svg class="hidden">
                 <defs>
@@ -27,25 +25,6 @@
                     <symbol id="icon-stairs">
                         <title>stairs</title>
                         <line x1="50%" y1="0" x2="50%" y2="100%"/>
-                    </symbol>
-                    <symbol id="icon-toilet" viewBox="0 0 36 32">
-                        <g id="g24" transform="matrix(.098022 0 0 .098299 7.1841e-5 -2.0508)">
-                            <g id="g6">
-                                <path d="m125.65 121.92c-2.417-6.508-8.949-10.185-15.59-10.185-3.315 0-3.621 0.085-5.595 0.085h-53.706-5.598c-7.584 0-13.17 3.591-15.587 10.1l-28.676 87.206c-2.732 7.358 0.96 15.561 8.245 18.32 7.286 2.76 15.407-0.969 18.14-8.326l7.624-20.527s0.544-2.07 0.544 6.967v121.04c0 10.582 8.494 19.16 18.973 19.16s18.973-8.578 18.973-19.16v-79.075s-0.092-0.699 0.644-0.699h7.124c0.703 0 0.664 0.699 0.664 0.699v79.075c0 10.582 8.494 19.16 18.973 19.16s18.973-8.578 18.973-19.16v-121.04c0-9.182 0.797-6.289 0.797-6.289l7.372 19.851c2.731 7.358 10.854 11.086 18.14 8.326 7.285-2.761 10.978-10.962 8.245-18.319z"/>
-                                <ellipse cx="77.991" cy="61.825" rx="40.736" ry="40.317"/>
-                            </g>
-                            <g id="g12">
-                                <circle cx="285.82" cy="61.599" r="40.736"/>
-                                <path d="m365.92 207.19-34.758-84.667c-1.988-4.272-3.747-9.997-11.914-9.997h-9.463-42.536-9.688c-8.146 0-12.396 5.308-14.727 10.089l-36.103 84.027c-3.438 7.055-0.566 15.578 6.411 19.039 6.982 3.46 15.43 0.547 18.868-6.51l2.717-5.571s0.844-1.503 0.527 0.159c-1.965 10.348-7.391 41.475-7.391 41.475-1.318 6.477 3.009 11.777 9.619 11.777h15.722c1.125 0 0.925 0.848 0.925 0.848v62.566c0 10.479 6.526 15.973 14.58 15.973 8.051 0 14.581-5.494 14.581-15.973v-62.816s-0.033-0.62 0.623-0.598c0.847 0.027 2.991 4e-3 3.952 4e-3 0.548 0 0.479 0.66 0.479 0.66v62.75c0 10.479 6.53 15.973 14.584 15.973 8.051 0 14.58-5.494 14.58-15.973v-62.399s-0.096-1.015 1.112-1.015h16.912c6.609 0 11.043-5.32 9.851-11.822 0 0-5.438-33.385-6.887-42.48-0.415-2.607 3.916 6.65 3.916 6.65 3.312 7.115 9.708 10.086 16.749 6.753 7.047-3.334 10.071-11.804 6.759-18.922z"/>
-                            </g>
-                        </g>
-                    </symbol>
-                    <symbol id="icon-wc" viewBox="0 0 32 32">
-                        <g id="g8" transform="scale(.081013)">
-                            <path d="m229.41 130.86c-2.405-3.355-6.284-5.346-10.412-5.346h-1.266c-5.524 0-10.424 3.539-12.161 8.782l-27.534 83.09-27.662-83.107c-1.743-5.233-6.639-8.765-12.156-8.765h-0.822c-0.051 0-0.104 3e-3 -0.153 3e-3 -0.053 0-0.105-3e-3 -0.155-3e-3h-0.998c-5.524 0-10.425 3.539-12.163 8.782l-27.533 83.09-27.661-83.107c-1.742-5.233-6.64-8.765-12.156-8.765h-1.268c-4.13 0-8.007 1.991-10.414 5.346-2.407 3.357-3.045 7.669-1.72 11.579l40.125 118.34c1.763 5.201 6.643 8.698 12.135 8.698h0.53c0.153 0 0.303-8e-3 0.455-0.014 0.151 6e-3 0.302 0.014 0.454 0.014h0.354c5.5 0 10.386-3.511 12.142-8.721l27.845-82.675 27.718 82.657c1.751 5.221 6.642 8.739 12.148 8.739h0.527c0.153 0 0.303-8e-3 0.456-0.014 0.15 6e-3 0.302 0.014 0.454 0.014h0.355c5.491 0 10.37-3.497 12.134-8.698l40.125-118.34c1.324-3.91 0.683-8.221-1.723-11.579z"/>
-                            <path d="m347.88 232.3c-4.756-4.416-12.063-4.578-17.01-0.378-8.521 7.234-19.511 11.218-30.943 11.218-26.069 0-47.277-20.51-47.277-45.721 0-25.116 21.208-45.548 47.277-45.548 11.542 0 22.522 3.916 30.921 11.027 5.087 4.306 12.625 3.995 17.339-0.719l0.427-0.427c2.544-2.542 3.899-6.036 3.74-9.628-0.161-3.592-1.822-6.952-4.58-9.258-13.371-11.184-30.366-17.344-47.848-17.344-40.598 0-73.628 32.253-73.628 71.898 0 39.739 33.03 72.07 73.628 72.07 17.454 0 34.493-6.207 47.979-17.48 2.822-2.36 4.495-5.817 4.589-9.494 0.098-3.678-1.393-7.22-4.087-9.723z"/>
-                            <path d="m313 0h-231c-45.214 0-81.999 36.784-81.999 81.998v230.99c0 45.22 36.785 82.009 81.999 82.009h231c45.215 0 81.999-36.789 81.999-82.009v-230.99c0-45.214-36.784-81.998-81.999-81.998zm66.999 312.99c0 36.949-30.055 67.009-66.999 67.009h-231c-36.943 0-66.999-30.06-66.999-67.009v-230.99c0-36.943 30.056-66.998 66.999-66.998h231c36.944 0 66.999 30.055 66.999 66.998z"/>
-                        </g>
                     </symbol>
                     <symbol id="icon-start" viewBox="0 0 42 32">
                         <path d="m41.496 7.2719c-2.1307-2.158-5.2559-3.0035-7.3238-3.563-0.39747-0.10753-0.77272-0.20905-1.085-0.30493-1.2692-0.39034-2.081-1.2689-2.4484-1.752 0.01214-0.38317-0.26557-0.81926-0.74898-1.1288l-0.51508-0.32991c-0.19757-0.1265-0.42397-0.19338-0.65456-0.19338-0.45994 0-0.88542 0.26321-1.1116 0.68721l-6.7032 12.033-6.379-11.981c-0.22327-0.43851-0.6534-0.71067-1.1238-0.71067-0.22149 0-0.44003 0.0621-0.63216 0.1795l-0.52097 0.31854c-0.48965 0.2992-0.77557 0.72965-0.77031 1.1133-0.37623 0.47467-1.2032 1.3342-2.4782 1.6964-0.31385 0.0891-0.69088 0.18236-1.0901 0.28111-2.0778 0.51406-5.218 1.2908-7.3879 3.402-0.636 0.61899-0.57728 1.1302-0.41585 1.4501l4.6772 9.2657c0.15724 0.31174 0.46127 0.5053 0.79342 0.50538 0.25772 0 0.50277-0.11405 0.68981-0.32104 0.44726-0.49482 2.0865-2.136 4.4038-2.479 1.8757-0.27772 4.0795-0.75901 6.2032-2.2237l0.02508-0.0174c0.05131-0.0356 0.18115-0.12579 0.24683-0.14056 0.0116 0.0124 0.03257 0.0391 0.05863 0.0907l1.7181 3.129-7.2363 12.99-0.0046 8e-3c-0.33723 0.63806-0.13323 1.4633 0.45458 1.8397l0.51508 0.32982c0.19757 0.1265 0.42397 0.19347 0.65456 0.19347 0.45895 0 0.88364-0.26214 1.11-0.68462l6.4227-11.186 6.3276 11.524c0.22363 0.43689 0.65296 0.70798 1.1224 0.70798 0.2214 0 0.44004-0.062 0.63225-0.1795l0.5208-0.31845c0.59531-0.36375 0.81466-1.1848 0.48903-1.8303l-7.1107-13.355 1.8773-3.2696 0.0073-0.0133c0.02642-0.05 0.04739-0.0759 0.05917-0.0881 0.06595 0.0165 0.19392 0.10931 0.24451 0.1461l0.0249 0.018c2.0962 1.5106 4.2908 2.0402 6.1611 2.3592 2.3111 0.39374 3.9207 2.071 4.3589 2.5758 0.18794 0.21638 0.43709 0.33563 0.70159 0.33563h9e-5c0.32474 0 0.62547-0.18738 0.78494-0.48899l4.8441-9.1612c0.16723-0.3163 0.2355-0.82598-0.38872-1.4584z"/>
@@ -65,7 +44,6 @@
                 <div class="levels">
                     <div class="level level--1" aria-label="Level 1">
                         <svg class="level_map level_map--1" viewBox="-0 0 1200 800" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
-                            <title>Map Level 1</title>
                             <defs>
                                 <linearGradient id="levelFogGradient" x1="50%" y1="50%" x2="100%" y2="0%">
                                     <stop offset="0" stop-color="rgb(255,255,255)"/>
@@ -550,7 +528,6 @@
                     </div>
                     <div class="level level--2" aria-label="Level 2">
                         <svg class="level_map level_map--2" viewBox="0 0 1200 800" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
-                            <title>Map Level 2</title>
                             <defs>
                                 <linearGradient id="levelFogGradient" x1="50%" y1="50%" x2="100%" y2="0%">
                                     <stop offset="0" stop-color="rgb(255,255,255)"/>
@@ -920,7 +897,6 @@
                     </div>
                     <div class="level level--3" aria-label="Level 3">
                         <svg class="level_map level_map--3" viewBox="0 0 1200 800" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
-                            <title>Map Level 3</title>
                             <defs>
                                 <linearGradient id="levelFogGradient" x1="50%" y1="50%" x2="100%" y2="0%">
                                     <stop offset="0" stop-color="rgb(255,255,255)"/>
@@ -1235,7 +1211,8 @@
             </div>
             <!-- /school -->
 
-            <div class="info">
+			<!-- ! - TV version only -->
+            <!--<div class="info">
                 <div class="minor-info">
                     <svg class="icon">
                         <use xlink:href="#icon-key"></use>
@@ -1250,8 +1227,42 @@
                     </svg>
                     <div class="steps"></div>
                 </div>
-            </div>
-            <!-- /info -->
+            </div>-->
+			<!-- /info -->			
+			
+			<div class="mode-list">
+				<div class="mode-item">
+					<span class="mode-icon">
+						<!--<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+							<path d="M0 0h24v24H0V0z" fill="none"/><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47zm-5 .99l3-1.01v11.7l-3 1.16V6.46zm14 11.08l-3 1.01V6.86l3-1.16v11.84z"/>
+						</svg>-->
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+							<path d="M0 0h24v24H0V0z" fill="none"/>
+							<path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/>
+						</svg>
+					</span>
+					<span class="mode-text">Učebny</span>
+				</div>
+				<div class="mode-item">
+					<span class="mode-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+							<path d="M0 0h24v24H0V0z" fill="none"/>
+							<path d="M12 7.27l4.28 10.43-3.47-1.53-.81-.36-.81.36-3.47 1.53L12 7.27M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/>
+						</svg>
+					</span>
+					<span class="mode-text">Navigace</span>
+				</div>
+				<div class="mode-item">
+					<span class="mode-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+							<path d="M0 0h24v24H0z" fill="none"/>
+							<path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/>
+						</svg>
+					</span>
+					<span class="mode-text">Zaměstnanci</span>
+				</div>
+			</div>
+			<!-- /detail list box -->
 				
 			<div class="navigator">
 				<span class="input-label">Navigace</span>
@@ -1334,56 +1345,21 @@
                 <span class="detail-job"></span>
 			</div>
 			<!-- /detail list box -->
-
-			<div class="mode-list">
-				<div class="mode-item">
-					<span class="mode-icon">
-						<!--<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47zm-5 .99l3-1.01v11.7l-3 1.16V6.46zm14 11.08l-3 1.01V6.86l3-1.16v11.84z"/>
-						</svg>-->
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/>
-							<path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/>
-						</svg>
-					</span>
-					<span class="mode-text">Učebny</span>
-				</div>
-				<div class="mode-item">
-					<span class="mode-icon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/>
-							<path d="M12 7.27l4.28 10.43-3.47-1.53-.81-.36-.81.36-3.47 1.53L12 7.27M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/>
-						</svg>
-					</span>
-					<span class="mode-text">Navigace</span>
-				</div>
-				<div class="mode-item">
-					<span class="mode-icon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0z" fill="none"/>
-							<path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/>
-						</svg>
-					</span>
-					<span class="mode-text">Zaměstnanci</span>
-				</div>
-			</div>
-			<!-- /detail list box -->
         </div>
 		<!-- /map -->
 		
-
-		<script src="js/classie.js"></script>
-		<script src="js/list.min.js"></script>
-        <script src="js/jquery-3.4.1.min.js"></script>
-		<script src="js/map-handler.js"></script>
-
 		<script src="json/map.json"></script>
+		<script src="js/map-handler.js"></script>
+		
+		<script src="js/list.min.js"></script>
+		
 		<script src="json/map_nodes.json"></script>
 		<script src="js/node-map.js"></script>
-
 		<script src="js/djikstra.js"></script>
-		<script src="js/navigation.js"></script> 
-		<script src="json/schedule.json"></script> <!-- test purposes -->
+		<script src="js/navigation.js"></script>
+
+		<script src="json/schedule2.json"></script> <!-- test purposes -->
+		<script src="js/classrooms.js"></script>
 		<script type="text/javascript">
 			var navigation;
 			var options = {
@@ -1393,10 +1369,14 @@
 			var teacherList = new List('list-panel', options);
 			
 			function loaded() {
-				navigation = new Navigation(mapJSON, mapNodesJSON);
+				mapHandler = new MapHandler();
+				navigation = new Navigation(mapJSON, mapNodesJSON, mapHandler);
 
 				navigation.registerListener(navigationEnded);
-                
+
+				classrooms = new Classrooms(mapJSON, mapHandler);
+				
+				// staff
                 spaces = [].slice.call(document.querySelectorAll('.list > li'));                
                 spaces.forEach(function(space) {
                     var spaceRoom = space.getAttribute('data-room');
@@ -1418,153 +1398,7 @@
 						detailListEl.style.opacity = 1;
                     });
 				});
-
-				var today = new Date();
-				var dd = String(today.getDate()).padStart(2, '0');
-				var mm = String(today.getMonth() + 1).padStart(2, '0');
-				var yyyy = today.getFullYear();
-
-				var date = yyyy + mm + dd;
-				console.log(date);
-
-				var time = today.getHours() * 60 + today.getMinutes();
-
-				var hodiny = [
-					[07*60 + 00, 07*60 + 45],
-					[07*60 + 50, 08*60 + 35],
-					[08*60 + 40, 09*60 + 25],
-					[09*60 + 35, 10*60 + 20],
-					[10*60 + 40, 11*60 + 25],
-					[11*60 + 35, 12*60 + 20],
-					[12*60 + 30, 13*60 + 15],
-					[13*60 + 20, 14*60 + 05],
-					[14*60 + 10, 14*60 + 55],
-					[15*60 + 00, 15*60 + 45]
-				];
-
-				var lesson = 0;
-
-				for(lesson = 0; lesson < hodiny.length; lesson++) {
-					if(hodiny[lesson][0] < time && hodiny[lesson][1] > time) {
-						break;
-					}
-				}
-
-				lesson++;
 				
-				var subjects = {
-					M: "#20a0ff",
-					Z: "#ffff6d",
-					Nae: "#ffc000",
-					Šj: "#ffff80",
-					Nj: "#ffec00",
-					N: "#ffec00",
-					Zsv: "#ffefbb",
-					Ov: "#c0ff40",
-					D: "#ffff00",
-					Aj: "#ffc959",
-					Čj: "#ffffff",
-					Ch: "#86d859",
-					Ivt: "#ffffff",
-					Bi: "#20c000",
-					Fy: "#7759ff",
-					Evh: "#c0ffff",
-					Evv: "#c060ff",
-					Tv: "#298d41",
-					Spg: "#ffffff",
-					Sch: "#86d859",
-					Nvh: "#ff8040",
-					Fj: "#ffa0ff",
-					SP: "#ffa080",
-					Vz: "#ffa000"
-				};
-
-				/*
-				var get = <php echo isset($_GET['lesson']) ? $_GET['lesson'] : 'false'>;
-				lesson = isNaN(get) ? lesson : get;
-				
-				$.ajax({
-					method: "POST",
-					url: "../getURL.php",
-					dataType: "json",
-					data: {url: "https://is.ghrabuvka.cz/api/schedule/" + date + "/" + lesson}
-				})
-				.done(function( msg ) {
-					Object.keys(msg).forEach(function(room) {
-						console.log(room, msg[room]);
-
-						navigation.indicateRoom(parseInt(room), msg[room].subject_color, msg[room].subject);
-					});
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(textStatus + '  ' + errorThrown);
-				});*/
-
-				/* for test only */
-
-				Object.keys(schedule).forEach(function(room) {
-					console.log(room, schedule[room]);
-
-					navigation.indicateRoom(parseInt(room), subjects[schedule[room].subject], schedule[room].subject, "map__text");
-				});
-
-				var levels = document.querySelector('.levels');
-				var minX = parseInt(getComputedStyle(document.getElementById('map')).getPropertyValue('--map-rotateX'));
-				var drag = false, x0 = null, y0 = null;
-				var rotX = 0, rotY = 0;
-
-				function getE(ev) {
-					return ev.touches ? ev.touches[0] : ev
-				};
-
-				function lock(ev) {
-					let e = getE(ev);
-
-					addEventListener('mousemove', rotate, false);
-					addEventListener('touchmove', rotate, false);
-
-					drag = true;
-					x0 = e.clientX;
-					y0 = e.clientY;
-				};
-
-				const Ax = 0.25;
-				const Ay = 0.25;
-
-				function rotate(ev) {
-					if(drag) {
-						let e = getE(ev),
-							x = e.clientX, y = e.clientY,
-							dx = x - x0, dy = y - y0;
-							
-						if(dx != 0 || dy != 0) {
-							rotX = Math.min(Math.max(rotX + (-dy) * Ax, -minX), 90 - minX); // rotace kolem osy X je posun v y
-							rotY += (-dx) * Ay;
-
-							x0 = x;
-							y0 = y;
-
-							levels.style.setProperty('--x', (rotX).toFixed(2) + 'deg');
-							levels.style.setProperty('--y', (rotY).toFixed(2) + 'deg');
-						}
-					}
-				};
-
-				function release(ev) {
-					if(drag) {
-						drag = false;
-						x0 = y0 = null;
-
-						removeEventListener('mousemove', rotate, false);
-						removeEventListener('touchmove', rotate, false);
-					}
-				};
-
-				addEventListener('mousedown', lock, false);
-				addEventListener('touchstart', lock, false);
-
-				addEventListener('mouseup', release, false);
-				addEventListener('touchend', release, false);
 			}
 
 			function navigationEnded() {

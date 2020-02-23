@@ -1,5 +1,5 @@
 function Djikstra() {
-  this.findSmallest = function(dist, q) { 
+  this.findSmallest = function(dist, q) {
     var min = Infinity;
     var minNode;
 
@@ -12,13 +12,13 @@ function Djikstra() {
 
     delete q[minNode];
     return minNode;
-  }
+  };
 
   this.getShortestPaths = function(previous, shortestPaths, startVertex, dist) {
     for (var node in shortestPaths) {
       var path = shortestPaths[node];
 
-      while(previous[node]) {
+      while (previous[node]) {
         path.push(node);
         node = previous[node];
       }
@@ -26,12 +26,12 @@ function Djikstra() {
       //gets the starting node in there as well if there was a path from it
       if (dist[node] === 0) {
         path.push(node);
-      } 
+      }
       path.reverse();
     }
-  }
+  };
 
-  this.calculate = function(graph, startVertex) { 
+  this.calculate = function(graph, startVertex) {
     var dist = {};
     var prev = {};
     var q = {};
@@ -49,7 +49,7 @@ function Djikstra() {
     while (Object.keys(q).length != 0) {
       var smallest = this.findSmallest(dist, q);
       var smallestNode = graph[smallest];
-      //searches for the node u in the node set Q that has the least dist[smallest] value.
+      //searches for the node u in the node set Q that has the smallest dist[smallest] value.
 
       for (var neighbour in smallestNode.neighbours) {
         var alt = dist[smallest] + smallestNode.neighbours[neighbour];
@@ -67,5 +67,5 @@ function Djikstra() {
       shortestPaths: shortestPaths,
       shortestDistances: dist
     };
-  }
+  };
 }

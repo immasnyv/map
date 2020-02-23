@@ -9,26 +9,16 @@ function MapHandler() {
     this.schoolLevels = [].slice.call(this.schoolLevelsEl.querySelectorAll('.level'));
     // total levels
     this.schoolLevelsTotal = this.schoolLevels.length;
-    // surroundings elems
-    this.schoolSurroundings = [].slice.call(this.school.querySelectorAll('.surroundings'));
-    // selected level position
-    this.selectedLevel;
-    // check if currently animating/navigating
-    this.isNavigating;
-
-    _this = this;
 
     // ******  Level transparency handling  ******
 
     this.makeLevelTransparent = function(level) {
-        classie.add(this.schoolLevels[level].querySelector(".level_map"), 'transparent');
-        //classie.add(this.schoolLevels[level].querySelector(".level__pins"), 'transparent');
+        this.schoolLevels[level].querySelector(".level_map").classList.add('transparent');
     }
 
     this.resetLevelsTransparency = function() {
-        for(let i = 0; i < 3; i++) {
-            classie.remove(this.schoolLevels[i].querySelector(".level_map"), 'transparent');
-            //classie.remove(this.schoolLevels[i].querySelector(".level__pins"), 'transparent');
+        for(let i = 0; i < this.schoolLevelsTotal; i++) {
+            this.schoolLevels[i].querySelector(".level_map").classList.remove('transparent');
         }
     }
 
@@ -59,11 +49,11 @@ function MapHandler() {
 
     this.showHerePin = function(startNode) {
         document.getElementById("here-" + startNode.level).setAttribute("style", "left: calc((100%/1200) * " + startNode.x + " - 2px); top: calc((100%/800) * " + (800 - startNode.y) + ");");
-        classie.add(this.schoolLevels[startNode.level - 1].querySelector('.here'), 'pin--active');
+        this.schoolLevels[startNode.level - 1].querySelector('.here').classList.add('pin--active');
     }
 
     this.showHereHint = function(level) {
-        classie.remove(this.schoolLevels[level].querySelector('.here-text'), 'pin-hidden'); // show here pin hint
+        this.schoolLevels[level].querySelector('.here-text').classList.remove('pin-hidden'); // show here pin hint
     }
 
     this.setHereHintText = function(level, text) {
@@ -74,11 +64,11 @@ function MapHandler() {
 
     this.showTargetPin = function(endNode) {
         document.getElementById("target-" + endNode.level).setAttribute("style", "left: calc((100%/1200) * " + endNode.x + " - 2px); top: calc((100%/800) * " + (800 - endNode.y) + ");");
-        classie.add(this.schoolLevels[endNode.level - 1].querySelector('.target'), 'pin--active');
+        this.schoolLevels[endNode.level - 1].querySelector('.target').classList.add('pin--active');
     }
 
     this.showTargetHint = function(level) {
-        classie.remove(this.schoolLevels[level].querySelector('.target-text'), 'pin-hidden'); // show target pin hint
+        this.schoolLevels[level].querySelector('.target-text').classList.remove('pin-hidden'); // show target pin hint
     }
 
     this.setTargetHintText = function(level, text) {
@@ -88,7 +78,7 @@ function MapHandler() {
 
 
     this.showStairsPin = function(level) {
-        classie.add(this.schoolLevels[level].querySelector('.stairs'), 'pin--active');
+        this.schoolLevels[level].querySelector('.stairs').classList.add('pin--active');
     }
 
     this.setStairsPinPosition = function(x, y, level) {
@@ -117,23 +107,23 @@ function MapHandler() {
     }
 
     this.removeHerePin = function(startNode) {
-        classie.remove(this.schoolLevels[startNode.level - 1].querySelector('.here'), 'pin--active');
+        this.schoolLevels[startNode.level - 1].querySelector('.here').classList.remove('pin--active');
     }
 
     this.removeHereHint = function(level) {
-        classie.add(this.schoolLevels[level].querySelector('.here-text'), 'pin-hidden'); // hide here pin hint
+        this.schoolLevels[level].querySelector('.here-text').classList.add('pin-hidden'); // hide here pin hint
     }
 
     this.removeTargetPin = function(endNode) {
-        classie.remove(this.schoolLevels[endNode.level - 1].querySelector('.target'), 'pin--active');
+        this.schoolLevels[endNode.level - 1].querySelector('.target').classList.remove('pin--active');
     }
 
     this.removeTargetHint = function(level) {
-        classie.add(this.schoolLevels[level].querySelector('.target-text'), 'pin-hidden'); // show target pin hint
+        this.schoolLevels[level].querySelector('.target-text').classList.add('pin-hidden'); // show target pin hint
     }
 
     this.removeStairsPin = function(level) {
-        classie.remove(this.schoolLevels[level].querySelector('.stairs'), 'pin--active');
+        this.schoolLevels[level].querySelector('.stairs').classList.remove('pin--active');
     }
     
     //******  Svg map handling ******
@@ -141,14 +131,14 @@ function MapHandler() {
     this.highlightRoom = function(room) {
         let roomEl = document.getElementById(room);
         if (roomEl) {
-            classie.add(roomEl, 'room--highlight');
+            roomEl.classList.add('room--highlight');
         }
     }
 
     this.unhighlightRoom = function(room) {
         let roomEl = document.getElementById(room);
         if (roomEl) {
-            classie.remove(roomEl, 'room--highlight');
+            roomEl.classList.remove('room--highlight');
         }
     }
 
@@ -199,7 +189,7 @@ function MapHandler() {
         let textNode = document.createTextNode(text);
         newText.appendChild(textNode);
         
-        document.querySelector('#gLevel' + level).appendChild(newText);
+        this.schoolLevelsEl.querySelector('#gLevel' + level).appendChild(newText);
     }
 
     this.drawMapPlaces = function() {
@@ -218,65 +208,71 @@ function MapHandler() {
         this.writeOnRoom([307, 321, 323], 3, text, "map__wc_text");
     }
 
-    //******  Map Surroundings appearence handling ******
+    // ******  3D mouse rotate interaction handlers  ******
+    this.minX = parseInt(getComputedStyle(this.mapEl).getPropertyValue('--map-rotateX'));
+    this.drag = false;
+    this.x0 = null;
+    this.y0 = null;
+    this.rotX = 0;
+    this.rotY = 0;
 
-    /**
-     * Show the surroundings level
-     */
-    /*this.showSurroundings = function() {
-        schoolSurroundings.forEach(function(el) {
-            classie.remove(el, 'surroundings--hidden');
-        });
-    }*/
+    this.init3Dmouse = function() {
+        addEventListener('mousedown', this.lock, false);
+        addEventListener('touchstart', this.lock, false);
 
-    /**
-     * Hide the surroundings level
-     */
-    /*this.hideSurroundings = function() {
-        schoolSurroundings.forEach(function(el) {
-            classie.add(el, 'surroundings--hidden');
-        });
-    }*/
+        addEventListener('mouseup', this.release, false);
+        addEventListener('touchend', this.release, false);
+    }
 
-    // ******  Animations handling  ******
+    this.getE = function(ev) {
+        return ev.touches ? ev.touches[0] : ev;
+    }
 
-    // Move 1 level up or down (direction)
-    /*this.moveByOneLevel = function(direction) {
-        if( _this.isNavigating || !_this.isExpanded || _this.isOpenContentArea ) {
-            return false;
+    this.lock = function(ev) {
+        let e = this_mapHandler.getE(ev);
+
+        addEventListener('mousemove', this_mapHandler.rotate, false);
+        addEventListener('touchmove', this_mapHandler.rotate, false);
+
+        this_mapHandler.drag = true;
+        this_mapHandler.x0 = e.clientX;
+        this_mapHandler.y0 = e.clientY;
+    }
+
+    this.Ax = 0.25;
+    this.Ay = 0.25;
+
+    this.rotate = function(ev) {
+        if(this_mapHandler.drag) {
+            let e = this_mapHandler.getE(ev),
+                x = e.clientX, y = e.clientY,
+                dx = x - this_mapHandler.x0, dy = y - this_mapHandler.y0;
+                
+            if(dx != 0 || dy != 0) {
+                this_mapHandler.rotX = Math.min(Math.max(this_mapHandler.rotX + (-dy) * this_mapHandler.Ax, -this_mapHandler.minX), 90 - this_mapHandler.minX); // rotace kolem osy X je posun v y
+                this_mapHandler.rotY += (-dx) * this_mapHandler.Ay;
+
+                this_mapHandler.x0 = x;
+                this_mapHandler.y0 = y;
+
+                this_mapHandler.schoolLevelsEl.style.setProperty('--x', (this_mapHandler.rotX).toFixed(2) + 'deg');
+                this_mapHandler.schoolLevelsEl.style.setProperty('--y', (this_mapHandler.rotY).toFixed(2) + 'deg');
+            }
         }
-        _this.isNavigating = true;
+    }
 
-        var prevSelectedLevel = _this.selectedLevel;
-        var currentLevel = schoolLevels[prevSelectedLevel-1];
+    this.release = function(ev) {
+        if(this_mapHandler.drag) {
+            this_mapHandler.drag = false;
+            this_mapHandler.x0 = this_mapHandler.y0 = null;
 
-        if( direction === 'Up' && prevSelectedLevel > 1 ) {
-            --_this.selectedLevel;
+            removeEventListener('mousemove', this_mapHandler.rotate, false);
+            removeEventListener('touchmove', this_mapHandler.rotate, false);
         }
-        else if( direction === 'Down' && prevSelectedLevel < _this.schoolLevelsTotal ) {
-            ++_this.selectedLevel;
-        }
-        else {
-            _this.isNavigating = false;	
-            return false;
-        }
-        
-        classie.add(currentLevel, 'level--moveOut' + direction);
-        
-        var nextLevel = _this.schoolLevels[_this.selectedLevel-1];
-        classie.add(nextLevel, 'level--current');
+    }
 
-        onEndTransition(currentLevel, function() {
-            classie.remove(currentLevel, 'level--moveOut' + direction);
-            
-            setTimeout(function() {classie.remove(currentLevel, 'level--current');}, 60);
-
-            classie.remove(_this.schoolLevelsEl, 'levels--selected-' + prevSelectedLevel);
-            classie.add(_this.schoolLevelsEl, 'levels--selected-' + _this.selectedLevel);
-
-            _this.isNavigating = false;
-        });
-    }*/
+    this_mapHandler = this;
 
     this.drawMapPlaces();
+    this.init3Dmouse();
 }

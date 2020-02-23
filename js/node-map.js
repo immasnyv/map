@@ -38,7 +38,7 @@ function NodeMap(mapNodes) {
 
         let neighboursDists = {};
 
-        // write relation of new node and neighbour nodes to neighbour nodes
+        // write relations of the new node and neighbour nodes to neighbour nodes
         for(let i = 0; i < nearestNode.length; i++) {
             if(nearestNode[i] != "") {
                 neighboursDists[nearestNode[i]] = nearestDist[i];
