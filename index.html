@@ -1231,7 +1231,7 @@
 			<!-- /info -->			
 			
 			<div class="mode-list">
-				<div class="mode-item">
+				<div class="mode-item mode-item--active" data-mode="Classrooms">
 					<span class="mode-icon">
 						<!--<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 							<path d="M0 0h24v24H0V0z" fill="none"/><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47zm-5 .99l3-1.01v11.7l-3 1.16V6.46zm14 11.08l-3 1.01V6.86l3-1.16v11.84z"/>
@@ -1243,7 +1243,7 @@
 					</span>
 					<span class="mode-text">Učebny</span>
 				</div>
-				<div class="mode-item">
+				<div class="mode-item" data-mode="Navigator">
 					<span class="mode-icon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 							<path d="M0 0h24v24H0V0z" fill="none"/>
@@ -1252,7 +1252,7 @@
 					</span>
 					<span class="mode-text">Navigace</span>
 				</div>
-				<div class="mode-item">
+				<div class="mode-item" data-mode="Staff">
 					<span class="mode-icon">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 							<path d="M0 0h24v24H0z" fill="none"/>
@@ -1269,6 +1269,11 @@
 				<input type="number" max=999 min=0 placeholder="Start" id="input-start">
 				<input type="number" max=999 min=0 placeholder="Cíl" id="input-target">
 				<input type="button" value="Navigovat" id="input-button" onclick="start()">
+				<label class="switch">
+					<input type="checkbox">
+					<span class="slider round">						
+					</span>
+				</label>
 			</div>
 			<!-- /navigator box -->
 			
@@ -1340,6 +1345,7 @@
 			<!-- /list panel -->
             
            <div class="list-detail">
+			    <span class="detail-exit" onclick="this.parentElement.style.opacity = '0'">X</span>
 				<span class="detail-name"></span>
                 <span class="detail-time"></span>
                 <span class="detail-job"></span>
@@ -1360,44 +1366,48 @@
 
 		<script src="json/schedule2.json"></script> <!-- test purposes -->
 		<script src="js/classrooms.js"></script>
+
+		<script src="js/staff.js"></script>
 		<script type="text/javascript">
 			var navigation;
-			var options = {
-				valueNames: ['name', { data: ['room'] }]
-			};
-
-			var teacherList = new List('list-panel', options);
 			
 			function loaded() {
-				mapHandler = new MapHandler();
+				var mapHandler = new MapHandler();
 				navigation = new Navigation(mapJSON, mapNodesJSON, mapHandler);
-
 				navigation.registerListener(navigationEnded);
+				var classrooms = new Classrooms(mapJSON, mapHandler);
+				var staff = new Staff(mapJSON, mapHandler);
 
-				classrooms = new Classrooms(mapJSON, mapHandler);
+				let modeButtons = document.querySelectorAll('#map .mode-item');
+				modeButtons.forEach(function(modeButton) {
+					modeButton.addEventListener("click", function(ev) {
+
+						modeButtons.forEach(function(btn) {
+							btn.classList.remove('mode-item--active');
+						});
+
+						ev.currentTarget.classList.add('mode-item--active');
+						switch (ev.currentTarget.getAttribute('data-mode')) {
+							default:
+							case 'Classrooms':
+								document.querySelector('#map .navigator').style.display = 'none';
+								document.querySelector('#map #list-panel').style.display = 'none';
+								break;
+
+							case 'Navigator':
+								document.querySelector('#map .navigator').style.display = 'flex';
+								document.querySelector('#map #list-panel').style.display = 'none';
+								break;
+
+							case 'Staff':
+								document.querySelector('#map .navigator').style.display = 'none';
+								document.querySelector('#map #list-panel').style.display = 'flex';
+								break;
+						}
+						
+					});
+				});	
 				
-				// staff
-                spaces = [].slice.call(document.querySelectorAll('.list > li'));                
-                spaces.forEach(function(space) {
-                    var spaceRoom = space.getAttribute('data-room');
-                    space.addEventListener("mouseover", function(ev) {
-                        show(spaceRoom);
-                    });
-                    
-                    space.addEventListener("mouseout", function(ev) {
-                        hide(spaceRoom);
-                    });
-
-					space.addEventListener("click", function(ev) {
-						let detailListEl = document.querySelector(".list-detail");
-
-						detailListEl.querySelector(".detail-name").innerHTML = ev.target.innerHTML;
-						detailListEl.querySelector(".detail-time").innerHTML = 'time';
-						detailListEl.querySelector(".detail-job").innerHTML = 'job';
-
-						detailListEl.style.opacity = 1;
-                    });
-				});
 				
 			}
 
@@ -1431,12 +1441,8 @@
 				}
 			}
 
-			function show(room) {
-				navigation.showRoom(room);
-			}
+			function activate() {
 
-			function hide(room) {
-				navigation.hideRoom(room);
 			}
         </script>
         

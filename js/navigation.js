@@ -283,23 +283,6 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         mapHandler.unhighlightRoom(this.startNode.room);
         mapHandler.unhighlightRoom(this.endNode.room);
     }
-    
-    this.showRoom = function(room) {
-        let node = mapJSON[room];
-
-        mapHandler.highlightRoom(room);
-        mapHandler.showTargetPin(node);
-        mapHandler.setTargetHintText(node.level - 1, room);;
-        mapHandler.showTargetHint(node.level - 1);
-    }
-
-    this.hideRoom = function(room) {
-        let node = mapJSON[room];
-
-        mapHandler.unhighlightRoom(room);
-        mapHandler.removeTargetPin(node);
-        mapHandler.removeTargetHint(node.level - 1);
-    }
 
     this_nav = this;
 }

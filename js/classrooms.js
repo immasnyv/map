@@ -1,9 +1,56 @@
 function Classrooms(mapJSON, mapHandler) {
-    // ******  Init  ******
-    this.init = function() {
-        let today = new Date();
-        let date = this.getFormattedDate(today);
-        let time = today.getHours() * 60 + today.getMinutes();
+    this.refresh = function() {
+        this.show();
+    }
+
+    this.show = function() {
+        let url = this.getURL(new Date());        
+
+        var data = new FormData();
+        data.append('url', url);
+        data.append('secret', 'El258dfktpd2HTR4UGfZLGLo2');
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "../getURL.php", true);
+        xhr.timeout = 5000;
+        xhr.onload = function() {
+            if (this.status == 200) {
+                let msg = JSON.parse(this.response);
+                this_rooms.indicateRooms(msg);
+
+                console.log('AJAX succesful');
+            } else {
+                console.log('onLoad Error AJAX');
+
+                // let's show demo at least -->
+                this_rooms.indicateRooms(schedule);
+            }
+        };
+        xhr.onerror = function() {
+            console.log('onError Error AJAX');
+        };
+        xhr.send(data);
+    }
+
+    this.indicateRooms = function(rooms) {
+        Object.keys(rooms).forEach(function(room) {
+            console.log(room, rooms[room]);
+
+            mapHandler.showRoom(parseInt(room), this_rooms.toColor(rooms[room].subject_color));
+            mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, rooms[room].subject, "map__text");
+        });
+    }
+
+    // get current date in yyyymmdd -> 20200223
+    this.getURL = function(now) {
+        let dd = String(now.getDate()).padStart(2, '0');
+        let mm = String(now.getMonth() + 1).padStart(2, '0');
+        let yyyy = now.getFullYear();
+
+        let date = yyyy + mm + dd;
+        console.log(date);
+
+        let time = now.getHours() * 60 + now.getMinutes();
 
         var timetable = [
             [07*60 + 00, 07*60 + 45],
@@ -18,64 +65,16 @@ function Classrooms(mapJSON, mapHandler) {
             [15*60 + 00, 15*60 + 45]
         ];
 
-        var lesson = 0;
-
+        var lesson = 3;
         for(lesson = 0; lesson < timetable.length; lesson++) {
             if(timetable[lesson][0] < time && timetable[lesson][1] > time) {
                 break;
             }
         }
-
         lesson++;
         //lesson = <?php echo isset($_GET['lesson']) ? $_GET['lesson'] : 'lesson'?>;
 
-        var data = new FormData();
-        data.append('url', 'https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
-        data.append('secret', 'El258dfktpd2HTR4UGfZLGLo2');
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', "../getURL.php", true);
-        xhr.timeout = 5000;
-        xhr.onload = function() {
-            if (this.status == 200) {
-                let msg = JSON.parse(this.response);
-                this_rooms.showUsedRooms(msg);
-
-                console.log('AJAX succesful');
-            } else {
-                console.log('onLoad Error AJAX');
-
-                // let's show demo at least -->
-                this_rooms.showUsedRooms(schedule);
-            }
-        };
-        xhr.onerror = function() {
-            console.log('onError Error AJAX');
-        };
-        xhr.send(data);
-    }
-
-    this.showUsedRooms = function(rooms) {
-        Object.keys(rooms).forEach(function(room) {
-            console.log(room, rooms[room]);
-
-            this_rooms.indicateRoom(parseInt(room), this_rooms.toColor(rooms[room].subject_color), rooms[room].subject, "map__text");
-        });
-    }
-
-    this.indicateRoom = function(room, color, text, textClass) {
-        mapHandler.showRoom(room, color);
-        mapHandler.writeOnRoom(room, mapJSON[room].level, text, textClass);
-    }
-
-    // get current date in yyyymmdd -> 20200223
-    this.getFormattedDate = function(today) {        
-        let dd = String(today.getDate()).padStart(2, '0');
-        let mm = String(today.getMonth() + 1).padStart(2, '0');
-        let yyyy = today.getFullYear();
-
-        let date = yyyy + mm + dd;
-        console.log(date);
+        return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
     }
 
     this.toColor = function(num) {
@@ -89,5 +88,5 @@ function Classrooms(mapJSON, mapHandler) {
 
     this_rooms = this;
 
-    this.init();
+    this.show();
 }

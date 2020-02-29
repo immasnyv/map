@@ -233,6 +233,7 @@ function MapHandler() {
 
         addEventListener('mousemove', this_mapHandler.rotate, false);
         addEventListener('touchmove', this_mapHandler.rotate, false);
+        addEventListener('onwheel', this_mapHandler.zoom, false);
 
         this_mapHandler.drag = true;
         this_mapHandler.x0 = e.clientX;
@@ -261,6 +262,24 @@ function MapHandler() {
         }
     }
 
+    this.zoom = function(ev) {
+        if(this_mapHandler.drag) {
+            let e = this_mapHandler.getE(ev),
+                dz = e.x0;
+                
+            if(dz != 0) {
+                this_mapHandler.rotX = Math.min(Math.max(this_mapHandler.rotX + (-dy) * this_mapHandler.Ax, -this_mapHandler.minX), 90 - this_mapHandler.minX); // rotace kolem osy X je posun v y
+                this_mapHandler.rotY += (-dx) * this_mapHandler.Ay;
+
+                this_mapHandler.x0 = x;
+                this_mapHandler.y0 = y;
+
+                this_mapHandler.schoolLevelsEl.style.setProperty('--x', (this_mapHandler.rotX).toFixed(2) + 'deg');
+                this_mapHandler.schoolLevelsEl.style.setProperty('--y', (this_mapHandler.rotY).toFixed(2) + 'deg');
+            }
+        }
+    }
+
     this.release = function(ev) {
         if(this_mapHandler.drag) {
             this_mapHandler.drag = false;
@@ -268,6 +287,7 @@ function MapHandler() {
 
             removeEventListener('mousemove', this_mapHandler.rotate, false);
             removeEventListener('touchmove', this_mapHandler.rotate, false);
+            removeEventListener('onwheel', this_mapHandler.zoom, false);
         }
     }
 
