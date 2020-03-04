@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -84,7 +83,7 @@
 									width="123.69457"
 									y="485.11725"
 									x="0.99661684"
-									class="map__space"
+									class="map__space map__buffet"
 									id="124" />
 								<rect
 									height="109.97012"
@@ -309,7 +308,7 @@
 									height="22.986887" />
 								<rect
 									id="131"
-									class="map__space map__wc"
+									class="map__space map__wc_girls"
 									x="518.7829"
 									y="0.66398603"
 									width="58.381935"
@@ -337,7 +336,7 @@
 									height="30.069551" />
 								<rect
 									id="14"
-									class="map__space map__wc"
+									class="map__space map__wc_girls"
 									x="703.78021"
 									y="485.73773"
 									width="30.831991"
@@ -767,7 +766,7 @@
 								  id="219" />
 							   <rect
 								  id="200"
-								  class="map__space map__wc"
+								  class="map__space map__wc_girls"
 								  x="440.03723"
 								  y="487.57358"
 								  width="93.835526"
@@ -777,7 +776,7 @@
 								  width="33.949707"
 								  y="487.703"
 								  x="405.56952"
-								  class="map__space map__wc"
+								  class="map__space map__wc_girls"
 								  id="201" />
 							   <g
 								  transform="matrix(0,-3.2754365,4.7664753,0,51.392765,540.80161)"
@@ -804,7 +803,7 @@
 								  width="51.226002"
 								  y="1.7560005"
 								  x="518.95599"
-								  class="map__space map__wc"
+								  class="map__space map__wc_girls"
 								  id="221" />
 							   <rect
 								  id="223"
@@ -1077,7 +1076,7 @@
 									width="126.50627"
 									y="482.1189"
 									x="1.5972644"
-									class="map__space map__wc"
+									class="map__space map__wc_girls"
 									id="320" />
 								<rect
 									id="300"
@@ -1142,7 +1141,7 @@
 									id="321" />
 								<rect
 									id="323"
-									class="map__space map__wc"
+									class="map__space map__wc_girls"
 									x="569.44354"
 									y="1.6013695"
 									width="50.920559"
@@ -1263,17 +1262,18 @@
 				</div>
 			</div>
 			<!-- /detail list box -->
+
+			<div class="slider">
+				<input type="range" min="0" max="8" value="0" class="slider-input">
+				<span class="slider-text">Hodina: 0</span>
+			</div>
+			<!-- /classrooms slider -->
 				
 			<div class="navigator">
 				<span class="input-label">Navigace</span>
 				<input type="number" max=999 min=0 placeholder="Start" id="input-start">
 				<input type="number" max=999 min=0 placeholder="Cíl" id="input-target">
 				<input type="button" value="Navigovat" id="input-button" onclick="start()">
-				<label class="switch">
-					<input type="checkbox">
-					<span class="slider round">						
-					</span>
-				</label>
 			</div>
 			<!-- /navigator box -->
 			
@@ -1392,23 +1392,35 @@
 							case 'Classrooms':
 								document.querySelector('#map .navigator').style.display = 'none';
 								document.querySelector('#map #list-panel').style.display = 'none';
+								document.querySelector('#map .list-detail').style.display = 'none';
+								document.querySelector('#map .slider').style.display = 'initial';
 								break;
 
 							case 'Navigator':
 								document.querySelector('#map .navigator').style.display = 'flex';
 								document.querySelector('#map #list-panel').style.display = 'none';
+								document.querySelector('#map .list-detail').style.display = 'none';
+								document.querySelector('#map .slider').style.display = 'none';
 								break;
 
 							case 'Staff':
 								document.querySelector('#map .navigator').style.display = 'none';
 								document.querySelector('#map #list-panel').style.display = 'flex';
+								document.querySelector('#map .slider').style.display = 'none';
 								break;
 						}
 						
 					});
-				});	
+				});
+
+				var mode = false;
+
+				updateClassrooms();
 				
-				
+				function updateClassrooms() {
+					classrooms.refresh(mode = !mode);
+					setTimeout(updateClassrooms, 5000);
+				}
 			}
 
 			function navigationEnded() {

@@ -1,10 +1,25 @@
 function Classrooms(mapJSON, mapHandler) {
-    this.refresh = function() {
-        this.show();
+    this.init = function() {
+        let slider = document.querySelector('#map .slider-input');
+        let sliderText = document.querySelector('#map .slider-text');
+
+        slider.addEventListener("input", function(ev) {
+            sliderText.innerHTML = 'Hodina: ' + this.value;
+            sliderText.style.setProperty('--position', ((this.value * 100) / 8) + '%');
+            this_rooms.show(false, new Date(), this.value);
+        });
+    }
+    
+    this.refresh = function(mode = false) {
+        this.show(mode, new Date());
     }
 
-    this.show = function() {
-        let url = this.getURL(new Date());        
+    this.show = function(mode, date, lesson) {
+        if(typeof lesson === 'undefined') {
+            var lesson = this_rooms.getLessonFromTime(date);
+        }
+
+        let url = this.getURL(date, lesson);
 
         var data = new FormData();
         data.append('url', url);
@@ -16,14 +31,14 @@ function Classrooms(mapJSON, mapHandler) {
         xhr.onload = function() {
             if (this.status == 200) {
                 let msg = JSON.parse(this.response);
-                this_rooms.indicateRooms(msg);
+                this_rooms.indicateRooms(msg, mode);
 
                 console.log('AJAX succesful');
             } else {
                 console.log('onLoad Error AJAX');
 
                 // let's show demo at least -->
-                this_rooms.indicateRooms(schedule);
+                this_rooms.indicateRooms(schedule, mode);
             }
         };
         xhr.onerror = function() {
@@ -32,24 +47,36 @@ function Classrooms(mapJSON, mapHandler) {
         xhr.send(data);
     }
 
-    this.indicateRooms = function(rooms) {
+    this.indicateRooms = function(rooms, mode) {
+        document.querySelectorAll('#map .map__text').forEach(function(el){
+			el.remove();
+        });
+
+        mapHandler.unshowRooms();
+        
         Object.keys(rooms).forEach(function(room) {
-            console.log(room, rooms[room]);
+            //console.log(room, rooms[room]);
 
             mapHandler.showRoom(parseInt(room), this_rooms.toColor(rooms[room].subject_color));
-            mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, rooms[room].subject, "map__text");
+            mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, mode ? rooms[room].subject : rooms[room].teacher, "map__text");
         });
     }
 
     // get current date in yyyymmdd -> 20200223
-    this.getURL = function(now) {
+    this.getURL = function(now, lesson) {
         let dd = String(now.getDate()).padStart(2, '0');
         let mm = String(now.getMonth() + 1).padStart(2, '0');
         let yyyy = now.getFullYear();
 
         let date = yyyy + mm + dd;
         console.log(date);
+        
+        //lesson = <?php echo isset($_GET['lesson']) ? $_GET['lesson'] : 'lesson'?>;
 
+        return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
+    }
+
+    this.getLessonFromTime = function(now) {
         let time = now.getHours() * 60 + now.getMinutes();
 
         var timetable = [
@@ -65,16 +92,15 @@ function Classrooms(mapJSON, mapHandler) {
             [15*60 + 00, 15*60 + 45]
         ];
 
-        var lesson = 3;
-        for(lesson = 0; lesson < timetable.length; lesson++) {
+        var lesson = 0;
+        for(; lesson < timetable.length; lesson++) {
             if(timetable[lesson][0] < time && timetable[lesson][1] > time) {
                 break;
             }
         }
         lesson++;
-        //lesson = <?php echo isset($_GET['lesson']) ? $_GET['lesson'] : 'lesson'?>;
 
-        return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
+        return lesson;
     }
 
     this.toColor = function(num) {
@@ -88,5 +114,5 @@ function Classrooms(mapJSON, mapHandler) {
 
     this_rooms = this;
 
-    this.show();
+    this.init();
 }
