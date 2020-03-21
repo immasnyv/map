@@ -200,20 +200,26 @@ function MapHandler() {
        this.schoolLevelsEl.querySelector('#gLevel' + level).appendChild(newText);
    }
 
+   this.deleteTextOnRooms = function(textClass) {
+        document.querySelectorAll('#map .' + textClass).forEach(function(el){
+            el.remove();
+        });
+   }
+
    this.drawMapPlaces = function() {
        let text = 'WC';
 
        this.writeOnRoom([11, 14], 1, text, "map__wc_text");
-       this.writeOnRoom([108, 131, 133], 1, text, "map__wc_text");
+       this.writeOnRoom([131, 133], 1, text, "map__wc_text");
        //this.writeOnRoom(126, 1, text, "map__wc_text");
 
-       this.writeOnRoom([207, 221, 223], 2, text, "map__wc_text");
-       this.writeOnRoom([200, 201], 2, text, "map__wc_text");
+       this.writeOnRoom([221, 223], 2, text, "map__wc_text");
+       this.writeOnRoom(200, 2, text, "map__wc_text");
        this.writeOnRoom(219, 2, text, "map__wc_text");
 
-       this.writeOnRoom([300, 301], 3, text, "map__wc_text");
+       this.writeOnRoom(300, 3, text, "map__wc_text");
        this.writeOnRoom(320, 3, text, "map__wc_text");
-       this.writeOnRoom([307, 321, 323], 3, text, "map__wc_text");
+       this.writeOnRoom([321, 323], 3, text, "map__wc_text");
 
        text = 'Bufet';
        this.writeOnRoom(124, 1, text, "map__buffet_text");

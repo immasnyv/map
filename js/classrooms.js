@@ -1,25 +1,78 @@
 function Classrooms(mapJSON, mapHandler) {
     this.init = function() {
-        let slider = document.querySelector('#map .slider-input');
-        let sliderText = document.querySelector('#map .slider-text');
+        let slider = document.querySelector('#map .classrooms-selector .slider-input');
+        let sliderText = document.querySelector('#map .classroom-slider-text');
+        let classroomsInfo = document.querySelector('#map .classrooms-selector .info');
+
+        let sliderBBox = slider.getBoundingClientRect();
+        sliderText.style.setProperty('top', sliderBBox.top + 'px');
+        sliderText.style.setProperty('left', sliderBBox.left + 'px');
+
+        this_rooms.updateLessonInInfo(classroomsInfo, this.lesson);
+        this_rooms.updateDateInInfo(classroomsInfo, this.date);
+        
+        sliderText.innerHTML = 'Hodina: ' + this.lesson;
+        slider.value = this.lesson;
+
+        function followMouse(ev) {
+            sliderText.style.setProperty('left', ev.clientX + 'px');
+            sliderText.style.setProperty('top', ev.clientY + 'px');
+        }
+
+        slider.addEventListener("mousedown", function(ev) {
+            if(ev.button == 0) {
+                sliderText.style.setProperty('display', 'initial');
+                slider.addEventListener("mousemove", followMouse);
+            }
+        });
+
+        slider.addEventListener("mouseup", function(ev) {
+            sliderText.style.setProperty('display', 'none');
+            slider.removeEventListener('mousemove', followMouse, false);
+        });
 
         slider.addEventListener("input", function(ev) {
             sliderText.innerHTML = 'Hodina: ' + this.value;
-            sliderText.style.setProperty('--position', ((this.value * 100) / 8) + '%');
-            this_rooms.show(false, new Date(), this.value);
         });
+        
+        slider.addEventListener("change", function(ev) {
+            this_rooms.show('subject', this_rooms.date, this_rooms.lesson = this.value);
+            this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
+        });
+
+        let arrows = [].slice.call(document.querySelectorAll('#map .classrooms-selector .arrow'));
+        arrows.forEach(function(arrow) {
+            arrow.addEventListener("click", function(ev) {
+                this_rooms.date.setDate(this_rooms.date.getDate() + (this.classList.contains('arrow__back') ? (-1) : +1));
+                this_rooms.show('subject', this_rooms.date, this_rooms.lesson);
+                this_rooms.updateDateInInfo(classroomsInfo, this_rooms.date);
+            });
+        }); 
+    }
+
+    this.updateLessonInInfo = function(infoBar, lesson) {
+        infoBar.querySelector('.lesson').innerHTML = lesson;
+    }
+
+    this.updateDateInInfo = function(infoBar, date) {
+        let euroDate = date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+        infoBar.querySelector('.date').innerHTML = euroDate;
     }
     
-    this.refresh = function(mode = false) {
-        this.show(mode, new Date());
+    this.refresh = function(mode) {
+        this.show(mode, this_rooms.date, this_rooms.lesson);
     }
 
     this.show = function(mode, date, lesson) {
+        let loader = document.querySelector('#map .loader');
+        loader.style.display = 'initial';
+
         if(typeof lesson === 'undefined') {
             var lesson = this_rooms.getLessonFromTime(date);
         }
 
         let url = this.getURL(date, lesson);
+        console.log(url);
 
         var data = new FormData();
         data.append('url', url);
@@ -34,11 +87,13 @@ function Classrooms(mapJSON, mapHandler) {
                 this_rooms.indicateRooms(msg, mode);
 
                 console.log('AJAX succesful');
+                loader.style.display = 'none';
             } else {
                 console.log('onLoad Error AJAX');
 
                 // let's show demo at least -->
                 this_rooms.indicateRooms(schedule, mode);
+                loader.style.display = 'none';
             }
         };
         xhr.onerror = function() {
@@ -48,30 +103,37 @@ function Classrooms(mapJSON, mapHandler) {
     }
 
     this.indicateRooms = function(rooms, mode) {
-        document.querySelectorAll('#map .map__text').forEach(function(el){
-			el.remove();
-        });
-
+        mapHandler.deleteTextOnRooms('map__text');
         mapHandler.unshowRooms();
         
         Object.keys(rooms).forEach(function(room) {
             //console.log(room, rooms[room]);
 
+            if(rooms[room].subject === undefined || rooms[room].subject === undefined) {
+                return;
+            }
+
             mapHandler.showRoom(parseInt(room), this_rooms.toColor(rooms[room].subject_color));
-            mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, mode ? rooms[room].subject : rooms[room].teacher, "map__text");
+            mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, rooms[room][mode], "map__text");
         });
     }
 
-    // get current date in yyyymmdd -> 20200223
+    this.clear = function() {
+        document.querySelectorAll('#map .map__text').forEach(function(el){
+			el.remove();
+        });
+        
+        mapHandler.unshowRooms();
+    }
+
+    
     this.getURL = function(now, lesson) {
+        // get current date in yyyymmdd -> 20200223
         let dd = String(now.getDate()).padStart(2, '0');
         let mm = String(now.getMonth() + 1).padStart(2, '0');
         let yyyy = now.getFullYear();
 
         let date = yyyy + mm + dd;
-        console.log(date);
-        
-        //lesson = <?php echo isset($_GET['lesson']) ? $_GET['lesson'] : 'lesson'?>;
 
         return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
     }
@@ -113,6 +175,9 @@ function Classrooms(mapJSON, mapHandler) {
     }
 
     this_rooms = this;
+
+    this.date = new Date();
+    this.lesson = this.getLessonFromTime(this.date);
 
     this.init();
 }

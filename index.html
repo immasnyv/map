@@ -444,7 +444,7 @@
 									height="81.679764" />
 								<rect
 									id="108"
-									class="map__space map__wc"
+									class="map__space"
 									x="494.52127"
 									y="52.775848"
 									width="24.341635"
@@ -762,7 +762,7 @@
 								  width="126.24001"
 								  y="487.80228"
 								  x="1.85953"
-								  class="map__space map__wc"
+								  class="map__space map__wc_girls"
 								  id="219" />
 							   <rect
 								  id="200"
@@ -776,7 +776,7 @@
 								  width="33.949707"
 								  y="487.703"
 								  x="405.56952"
-								  class="map__space map__wc_girls"
+								  class="map__space"
 								  id="201" />
 							   <g
 								  transform="matrix(0,-3.2754365,4.7664753,0,51.392765,540.80161)"
@@ -861,7 +861,7 @@
 							   </g>
 							   <rect
 								  id="207"
-								  class="map__space map__wc"
+								  class="map__space"
 								  x="484.69409"
 								  y="44.451527"
 								  width="34.132935"
@@ -1076,7 +1076,7 @@
 									width="126.50627"
 									y="482.1189"
 									x="1.5972644"
-									class="map__space map__wc_girls"
+									class="map__space map__wc"
 									id="320" />
 								<rect
 									id="300"
@@ -1084,13 +1084,13 @@
 									x="440.63574"
 									y="482.08002"
 									width="93.241028"
-									height="35.968201" />
+									height="35.968201"/>
 								<rect
 									height="36.007084"
 									width="35.06221"
 									y="482.08002"
 									x="405.57352"
-									class="map__space map__wc"
+									class="map__space "
 									id="301" />
 								<g
 									id="g16450"
@@ -1137,11 +1137,11 @@
 									width="50.399109"
 									y="1.555869"
 									x="518.99896"
-									class="map__space map__wc"
+									class="map__space map__wc_girls"
 									id="321" />
 								<rect
 									id="323"
-									class="map__space map__wc_girls"
+									class="map__space map__wc"
 									x="569.44354"
 									y="1.6013695"
 									width="50.920559"
@@ -1175,7 +1175,7 @@
 								</g>
 								<rect
 									id="307"
-									class="map__space map__wc"
+									class="map__space"
 									x="482.71432"
 									y="40.578388"
 									width="35.904377"
@@ -1263,11 +1263,34 @@
 			</div>
 			<!-- /detail list box -->
 
-			<div class="slider">
-				<input type="range" min="0" max="8" value="0" class="slider-input">
-				<span class="slider-text">Hodina: 0</span>
+			<div class="loader"></div>
+			<!-- /loader -->
+			
+			<span class="classroom-slider-text">Hodina: 1</span>
+
+			<div class="classrooms-selector">
+				<div class="info">
+					<span class="date">26.3.2020</span> | <span class="lesson">1</span> hodina
+				</div>
+				<div class="control">
+					<span class="arrow arrow__back">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<polyline  points="14,6 8,12 14,18"/> <!--37,15 20,32 37,49"/>-->
+						</svg>
+					</span>
+					<span class="text">1</span>
+					<div class="slider">
+						<input type="range" min="1" max="11" value="1" class="slider-input">
+					</div>
+					<span class="text">11</span>
+					<span class="arrow arrow__forward">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+							<polyline points="10,6 17,12 10,18"/><!-- 27,15 44,32 27,49"/>-->
+						</svg>
+					</span>
+				</div>
 			</div>
-			<!-- /classrooms slider -->
+			<!-- /classrooms setter -->
 				
 			<div class="navigator">
 				<span class="input-label">Navigace</span>
@@ -1278,7 +1301,7 @@
 			<!-- /navigator box -->
 			
 			<div id="list-panel">
-				<input type="text" class="search" placeholder="Hledat...">
+				<input type="search" class="search" placeholder="Hledat...">
 				<div id="list-places"> 
 					<ul class="list">
 						<li data-room="308"><span class="name">Bebjaková Edita, Mgr.</span></li>
@@ -1354,7 +1377,7 @@
         </div>
 		<!-- /map -->
 		
-		<script src="json/map.json"></script>
+		<script src="json/map2.json"></script>
 		<script src="js/map-handler.js"></script>
 		
 		<script src="js/list.min.js"></script>
@@ -1377,6 +1400,19 @@
 				navigation.registerListener(navigationEnded);
 				var classrooms = new Classrooms(mapJSON, mapHandler);
 				var staff = new Staff(mapJSON, mapHandler);
+				
+				var avalaibleModes = ['teacher', 'subject', 'class'];
+				var i = 0;
+				var update = setInterval(updateClassrooms, 5000);
+
+				updateClassrooms();				
+				
+				function updateClassrooms() {
+					let mode = avalaibleModes[i++];
+					if(i > 2) i = 0;
+
+					classrooms.refresh(mode);					
+				}
 
 				let modeButtons = document.querySelectorAll('#map .mode-item');
 				modeButtons.forEach(function(modeButton) {
@@ -1393,34 +1429,38 @@
 								document.querySelector('#map .navigator').style.display = 'none';
 								document.querySelector('#map #list-panel').style.display = 'none';
 								document.querySelector('#map .list-detail').style.display = 'none';
-								document.querySelector('#map .slider').style.display = 'initial';
+								document.querySelector('#map .classrooms-selector').style.display = 'flex';
+								mapHandler.resetLevelsTransparency();
+								navigation.clear();
+								updateClassrooms();
+								update = setInterval(updateClassrooms, 5000);
 								break;
 
 							case 'Navigator':
 								document.querySelector('#map .navigator').style.display = 'flex';
 								document.querySelector('#map #list-panel').style.display = 'none';
 								document.querySelector('#map .list-detail').style.display = 'none';
-								document.querySelector('#map .slider').style.display = 'none';
+								document.querySelector('#map .classrooms-selector').style.display = 'none';
+								mapHandler.resetLevelsTransparency();
+								clearInterval(update);
+								classrooms.clear();
 								break;
 
 							case 'Staff':
 								document.querySelector('#map .navigator').style.display = 'none';
 								document.querySelector('#map #list-panel').style.display = 'flex';
-								document.querySelector('#map .slider').style.display = 'none';
+								document.querySelector('#map .classrooms-selector').style.display = 'none';
+								mapHandler.makeLevelTransparent(1);
+								mapHandler.makeLevelTransparent(2);
+								navigation.clear();
+								clearInterval(update);
+								classrooms.clear();
 								break;
 						}
-						
 					});
 				});
 
-				var mode = false;
-
-				updateClassrooms();
 				
-				function updateClassrooms() {
-					classrooms.refresh(mode = !mode);
-					setTimeout(updateClassrooms, 5000);
-				}
 			}
 
 			function navigationEnded() {
