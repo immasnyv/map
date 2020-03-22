@@ -284,5 +284,14 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         mapHandler.unhighlightRoom(this.endNode.room);
     }
 
+    this.hide = function() {
+        document.querySelector('#map .navigator').style.display = 'none';
+        this_nav.clear();
+    }
+
+    this.show = function() {
+        document.querySelector('#map .navigator').style.display = 'flex';
+    }
+
     this_nav = this;
 }

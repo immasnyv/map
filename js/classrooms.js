@@ -36,7 +36,7 @@ function Classrooms(mapJSON, mapHandler) {
         });
         
         slider.addEventListener("change", function(ev) {
-            this_rooms.show('subject', this_rooms.date, this_rooms.lesson = this.value);
+            this_rooms.showRooms('subject', this_rooms.date, this_rooms.lesson = this.value);
             this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
         });
 
@@ -44,7 +44,7 @@ function Classrooms(mapJSON, mapHandler) {
         arrows.forEach(function(arrow) {
             arrow.addEventListener("click", function(ev) {
                 this_rooms.date.setDate(this_rooms.date.getDate() + (this.classList.contains('arrow__back') ? (-1) : +1));
-                this_rooms.show('subject', this_rooms.date, this_rooms.lesson);
+                this_rooms.showRooms('subject', this_rooms.date, this_rooms.lesson);
                 this_rooms.updateDateInInfo(classroomsInfo, this_rooms.date);
             });
         }); 
@@ -60,10 +60,10 @@ function Classrooms(mapJSON, mapHandler) {
     }
     
     this.refresh = function(mode) {
-        this.show(mode, this_rooms.date, this_rooms.lesson);
+        this.showRooms(mode, this_rooms.date, this_rooms.lesson);
     }
 
-    this.show = function(mode, date, lesson) {
+    this.showRooms = function(mode, date, lesson) {
         let loader = document.querySelector('#map .loader');
         loader.style.display = 'initial';
 
@@ -84,6 +84,7 @@ function Classrooms(mapJSON, mapHandler) {
         xhr.onload = function() {
             if (this.status == 200) {
                 let msg = JSON.parse(this.response);
+                this_rooms.clear();
                 this_rooms.indicateRooms(msg, mode);
 
                 console.log('AJAX succesful');
@@ -92,6 +93,7 @@ function Classrooms(mapJSON, mapHandler) {
                 console.log('onLoad Error AJAX');
 
                 // let's show demo at least -->
+                this_rooms.clear();
                 this_rooms.indicateRooms(schedule, mode);
                 loader.style.display = 'none';
             }
@@ -102,10 +104,7 @@ function Classrooms(mapJSON, mapHandler) {
         xhr.send(data);
     }
 
-    this.indicateRooms = function(rooms, mode) {
-        mapHandler.deleteTextOnRooms('map__text');
-        mapHandler.unshowRooms();
-        
+    this.indicateRooms = function(rooms, mode) {  
         Object.keys(rooms).forEach(function(room) {
             //console.log(room, rooms[room]);
 
@@ -119,13 +118,9 @@ function Classrooms(mapJSON, mapHandler) {
     }
 
     this.clear = function() {
-        document.querySelectorAll('#map .map__text').forEach(function(el){
-			el.remove();
-        });
-        
+        mapHandler.deleteTextOnRooms('map__text');        
         mapHandler.unshowRooms();
     }
-
     
     this.getURL = function(now, lesson) {
         // get current date in yyyymmdd -> 20200223
@@ -141,7 +136,7 @@ function Classrooms(mapJSON, mapHandler) {
     this.getLessonFromTime = function(now) {
         let time = now.getHours() * 60 + now.getMinutes();
 
-        var timetable = [
+        const timetable = [
             [07*60 + 00, 07*60 + 45],
             [07*60 + 50, 08*60 + 35],
             [08*60 + 40, 09*60 + 25],
@@ -172,6 +167,15 @@ function Classrooms(mapJSON, mapHandler) {
             b = (num & 0xFF0000) >>> 16;
 
         return "rgb(" + [r, g, b].join(",") + ")";
+    }
+
+    this.hide = function() {
+        this_rooms.clear();
+        document.querySelector('#map .classrooms-selector').style.display = 'none';
+    }
+
+    this.show = function() {
+        document.querySelector('#map .classrooms-selector').style.display = 'flex';
     }
 
     this_rooms = this;

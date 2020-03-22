@@ -92,6 +92,20 @@ body {
 	flex-flow: column nowrap;
 	justify-content: flex-start;
 	z-index: 5;
+
+	background:	-moz-linear-gradient(
+		left ,
+		#00000025 0%,
+		#00000010 25px,
+      	#00000000 50px
+	);
+	
+	background:	-webkit-linear-gradient(
+		left ,
+		#00000025 0%,
+		#00000010 25px,
+      	#00000000 50px
+    );
 }
 
 #map .mode-item {
@@ -293,36 +307,6 @@ body {
 #map #list-places li:hover {
 	color: black;
 	cursor: pointer;
-}
-
-#map .list-detail {
-	position:absolute;
-	top: 2%;
-	right: 16%;
-
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-
-	font-size: calc(var(--map-min-dim) * 0.022);
-	padding: 1%;
-	border-radius: 15px;
-	color: var(--map-text-color);
-	background: var(--map-primary-color);
-
-	opacity: 0;
-	-webkit-transition: opacity 0.3s;
-	transition: opacity 0.3s;
-}
-
-#map .detail-exit {
-	align-self: flex-end;
-	padding: 5px;
-	cursor: pointer;
-}
-
-#map .detail-exit:hover {
-	color: red;
 }
 
 /***************/
