@@ -15,8 +15,8 @@ body {
 	--map-min-dim: var(--map-height);
 	--map-max-dim: var(--map-width);
 
-	--map-primary-color: /*#be3e7a;*/#4caf50;
-	--map-dark-primary-color: /*#963160;*/#388e3c;
+	--map-primary-color: #be3e7a;/*#4caf50;*/
+	--map-dark-primary-color: #963160;/*#388e3c;*/
 	--map-text-color: #f1f1f1;
 	--map-secondary-text-color: #b4b4b4;
 

@@ -1,4 +1,4 @@
-function Classrooms(mapJSON, mapHandler) {
+function Classrooms(mapJSON, mapHandler, ghrabApi) {
     this.init = function() {
         let slider = document.querySelector('#map .classrooms-selector .slider-input');
         let sliderText = document.querySelector('#map .classroom-slider-text');
@@ -6,13 +6,14 @@ function Classrooms(mapJSON, mapHandler) {
 
         let sliderBBox = slider.getBoundingClientRect();
         sliderText.style.setProperty('top', sliderBBox.top + 'px');
-        sliderText.style.setProperty('left', sliderBBox.left + 'px');
+        let position = sliderBBox.left + (sliderBBox.width * (ghrabApi.getLessonNumber(this.lesson) - 1) / 9);
+        sliderText.style.setProperty('left', position + 'px');
 
         this_rooms.updateLessonInInfo(classroomsInfo, this.lesson);
         this_rooms.updateDateInInfo(classroomsInfo, this.date);
         
         sliderText.innerHTML = 'Hodina: ' + this.lesson;
-        slider.value = this.lesson;
+        slider.value = ghrabApi.getLessonNumber(this.lesson);
 
         function followMouse(ev) {
             sliderText.style.setProperty('left', ev.clientX + 'px');
@@ -67,52 +68,42 @@ function Classrooms(mapJSON, mapHandler) {
         let loader = document.querySelector('#map .loader');
         loader.style.display = 'initial';
 
-        if(typeof lesson === 'undefined') {
-            var lesson = this_rooms.getLessonFromTime(date);
+        this_rooms.mode = mode;
+        ghrabApi.getSchedule(this_rooms.showRoomsOk, this_rooms.showRoomsError, date, lesson);
+    }
+    
+    this.showRoomsOk = function(data) {
+        this_rooms.clear();
+        if(Object.keys(data).length != 0) {
+            this_rooms.indicateRooms(data, this_rooms.mode);
         }
 
-        let url = this.getURL(date, lesson);
-        console.log(url);
+        let loader = document.querySelector('#map .loader');
+        loader.style.display = 'none';
+    }
 
-        var data = new FormData();
-        data.append('url', url);
-        data.append('secret', 'El258dfktpd2HTR4UGfZLGLo2');
+    this.showRoomsError = function(error) {
+        let loader = document.querySelector('#map .loader');
+        loader.style.display = 'none';
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', "../getURL.php", true);
-        xhr.timeout = 5000;
-        xhr.onload = function() {
-            if (this.status == 200) {
-                let msg = JSON.parse(this.response);
-                this_rooms.clear();
-                this_rooms.indicateRooms(msg, mode);
+        if(error == "Po výuce" || error == "Před výukou") {
+            return;
+        }
 
-                console.log('AJAX succesful');
-                loader.style.display = 'none';
-            } else {
-                console.log('onLoad Error AJAX');
-
-                // let's show demo at least -->
-                this_rooms.clear();
-                this_rooms.indicateRooms(schedule, mode);
-                loader.style.display = 'none';
-            }
-        };
-        xhr.onerror = function() {
-            console.log('onError Error AJAX');
-        };
-        xhr.send(data);
+        // let's show demo at least -->
+        this_rooms.clear();
+        this_rooms.indicateRooms(schedule, this_rooms.mode);        
     }
 
     this.indicateRooms = function(rooms, mode) {  
         Object.keys(rooms).forEach(function(room) {
             //console.log(room, rooms[room]);
 
-            if(rooms[room].subject === undefined || rooms[room].subject === undefined) {
+            if(rooms[room].class === undefined || rooms[room].subject === undefined) {
                 return;
             }
 
-            mapHandler.showRoom(parseInt(room), this_rooms.toColor(rooms[room].subject_color));
+            mapHandler.showRoom(parseInt(room), ghrabApi.toColor(rooms[room].subject_color));
             mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, rooms[room][mode], "map__text");
         });
     }
@@ -120,53 +111,6 @@ function Classrooms(mapJSON, mapHandler) {
     this.clear = function() {
         mapHandler.deleteTextOnRooms('map__text');        
         mapHandler.unshowRooms();
-    }
-    
-    this.getURL = function(now, lesson) {
-        // get current date in yyyymmdd -> 20200223
-        let dd = String(now.getDate()).padStart(2, '0');
-        let mm = String(now.getMonth() + 1).padStart(2, '0');
-        let yyyy = now.getFullYear();
-
-        let date = yyyy + mm + dd;
-
-        return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
-    }
-
-    this.getLessonFromTime = function(now) {
-        let time = now.getHours() * 60 + now.getMinutes();
-
-        const timetable = [
-            [07*60 + 00, 07*60 + 45],
-            [07*60 + 50, 08*60 + 35],
-            [08*60 + 40, 09*60 + 25],
-            [09*60 + 35, 10*60 + 20],
-            [10*60 + 40, 11*60 + 25],
-            [11*60 + 35, 12*60 + 20],
-            [12*60 + 30, 13*60 + 15],
-            [13*60 + 20, 14*60 + 05],
-            [14*60 + 10, 14*60 + 55],
-            [15*60 + 00, 15*60 + 45]
-        ];
-
-        var lesson = 0;
-        for(; lesson < timetable.length; lesson++) {
-            if(timetable[lesson][0] < time && timetable[lesson][1] > time) {
-                break;
-            }
-        }
-        lesson++;
-
-        return lesson;
-    }
-
-    this.toColor = function(num) {
-        num >>>= 0;
-        let r = num & 0xFF,
-            g = (num & 0xFF00) >>> 8,
-            b = (num & 0xFF0000) >>> 16;
-
-        return "rgb(" + [r, g, b].join(",") + ")";
     }
 
     this.hide = function() {
@@ -180,8 +124,9 @@ function Classrooms(mapJSON, mapHandler) {
 
     this_rooms = this;
 
-    this.date = new Date();
-    this.lesson = this.getLessonFromTime(this.date);
+    this.date = new Date();//('22 Mar 2020 12:15');
+    this.lesson = ghrabApi.getLessonFromTime(this.date);
+    this.mode;
 
     this.init();
 }
