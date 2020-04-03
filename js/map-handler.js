@@ -26,6 +26,10 @@ function MapHandler() {
    this.setPrimaryColor = function(accentColor) {
        this.mapEl.style.setProperty('--map-primary-color', accentColor);
    }
+   
+   this.getPrimaryColor = function() {
+       return getComputedStyle(this.mapEl).getPropertyValue('--map-primary-color');
+    }
 
    // ******  Pin handling  ******
 

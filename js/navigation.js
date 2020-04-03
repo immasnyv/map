@@ -238,7 +238,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
     // ******  Main control functions  ******
     this.listener = function(val) {};
 
-    this.navigate = function(endRoom, startRoom=0, primaryColor='#4caf50') {
+    this.navigate = function(endRoom, startRoom=0) {
         this.setNavigatingState(true);
 
         let startRoomInfo = mapJSON[startRoom] || null;        
@@ -252,8 +252,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         this.endNode = {name: ">" + endRoomInfo.level, x: endRoomInfo.x, y: endRoomInfo.y, level: endRoomInfo.level, room: endRoom};
 
         // set color scheme
-        mapHandler.setPrimaryColor(primaryColor);
-        this.accentColor = primaryColor;
+        this.accentColor = mapHandler.getPrimaryColor();
 
         // configure start and end pins
         mapHandler.setTargetHintText(this.endNode.level - 1, endRoom);

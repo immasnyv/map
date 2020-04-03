@@ -1,22 +1,76 @@
 function Staff(mapJSON, mapHandler, ghrabApi) {
-    var teacherList = new List('list-panel', { valueNames: ['name', { data: ['room']}]} );
+    var teacherList;
     var lastClickedPinRoom;
     this.name;
     this.room;
 
     this.init = function() {
+        this_staff.showStaffList();
+    }
+
+    this.showStaffList = function() {
+        ghrabApi.getStaff(this_staff.showStaffListOk, this_staff.showStaffListError);
+    }
+
+    this.showStaffListOk = function(data) {
+        var values = [];
+        for(var teacher in data.staff) {
+            values.push({name: (data.staff[teacher].surname + ' ' + data.staff[teacher].firstname), room: data.staff[teacher].room});
+        }
+
+        var options = {
+            valueNames: ['name', 'room'],
+            item: '<li><span class="name"></span><span class="room"></span></li>'
+        };
+
+        teacherList = new List('list-panel', options, values);
+        teacherList.sort('name', { alphabet: 'AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž'});
+
         let spaces = [].slice.call(document.querySelectorAll('.list > li'));                
         spaces.forEach(function(space) {
-            var spaceRoom = space.getAttribute('data-room');
             var name = space.children[0].innerHTML;
+            var spaceRoom = space.children[1].innerHTML;
 
-            space.addEventListener("click", function(ev) {
-                this_staff.clear(lastClickedPinRoom);
+            if(spaceRoom !== undefined) {
+                space.addEventListener("click", function(ev) {
+                    this_staff.clear(lastClickedPinRoom);
 
-                mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
-                mapHandler.writeOnRoom(spaceRoom, mapJSON[spaceRoom].level, spaceRoom, "map__text");
-                this_staff.showCurrentPosition(name, spaceRoom);
-            });
+                    mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
+                    mapHandler.writeOnRoom(spaceRoom, mapJSON[spaceRoom].level, spaceRoom, "map__text");
+                    this_staff.showCurrentPosition(name, spaceRoom);
+                });
+            }
+        });
+    }
+
+    this.showStaffListError = function() {
+        var values = [];
+        for(var teacher in staffJSON.staff) {
+            values.push({name: (staffJSON.staff[teacher].surname + ' ' + staffJSON.staff[teacher].firstname), room: staffJSON.staff[teacher].room});
+        }
+
+        var options = {
+            valueNames: ['name', 'room'],
+            item: '<li><span class="name"></span><span class="room"></span></li>'
+        };
+
+        teacherList = new List('list-panel', options, values);
+        teacherList.sort('name', { alphabet: 'AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽaábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž'});
+
+        let spaces = [].slice.call(document.querySelectorAll('.list > li'));                
+        spaces.forEach(function(space) {
+            var name = space.children[0].innerHTML;
+            var spaceRoom = space.children[1].innerHTML;
+
+            if(spaceRoom !== '') {
+                space.addEventListener("click", function(ev) {
+                    this_staff.clear(lastClickedPinRoom);
+
+                    mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
+                    mapHandler.writeOnRoom(spaceRoom, mapJSON[spaceRoom].level, spaceRoom, "map__text");
+                    this_staff.showCurrentPosition(name, spaceRoom);
+                });
+            }
         });
     }
 

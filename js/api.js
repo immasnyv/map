@@ -16,10 +16,11 @@ function GhrabApi() {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', "../getURL.php", true);
         xhr.timeout = 5000;
+        xhr.responseType = 'json';
         xhr.onload = function() {
             if(this.readyState === 4) {
                 if (this.status == 200) {
-                    callbackOk(JSON.parse(this.response));
+                    callbackOk(this.response);
                     console.log('AJAX succesful');
                 } else {
                     callbackError('Load Error');
@@ -30,6 +31,43 @@ function GhrabApi() {
         xhr.onerror = function() {
             callbackError('Load Error');
             console.log('onError Error AJAX');
+        };
+        xhr.ontimeout = function() {
+            callbackError('Timeout');
+            console.log('Timeot AJAX');
+        };
+        xhr.send(data);
+    }
+
+    this.getStaff = function(callbackOk, callbackError) {
+        let url = 'https://is.ghrabuvka.cz/api/staff';
+
+        var data = new FormData();
+        data.append('url', url);
+        data.append('secret', /*<?php echo '*/'El258dfktpd2HTR4UGfZLGLo2'/*';?>*/);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "../getURL.php", true);
+        xhr.timeout = 5000;
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+            if(this.readyState === 4) {
+                if (this.status == 200) {
+                    callbackOk(this.response);
+                    console.log('AJAX succesful');
+                } else {
+                    callbackError('Load Error');
+                    console.log('onLoad Error AJAX');
+                }
+            }
+        };
+        xhr.onerror = function() {
+            callbackError('Load Error');
+            console.log('onError Error AJAX');
+        };
+        xhr.timeout = function() {
+            callbackError('Timeout');
+            console.log('Timeot AJAX');
         };
         xhr.send(data);
     }

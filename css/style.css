@@ -15,8 +15,9 @@ body {
 	--map-min-dim: var(--map-height);
 	--map-max-dim: var(--map-width);
 
-	--map-primary-color: #be3e7a;/*#4caf50;*/
-	--map-dark-primary-color: #963160;/*#388e3c;*/
+	--map-primary-color: /*#be3e7a;*/#4caf50;
+	--map-dark-primary-color: /*#963160;*/#388e3c;
+	--map-clicked-color: /*#963160;*/#296b2d;
 	--map-text-color: #f1f1f1;
 	--map-secondary-text-color: #b4b4b4;
 
@@ -86,7 +87,7 @@ body {
 	left: 0;
 	top: 0;
 
-	height: 100vh;
+	height: 100%;
 
 	display: flex;
 	flex-flow: column nowrap;
@@ -146,10 +147,6 @@ body {
 	width: 24px;
 	height: 24px;
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
 	-webkit-transition: width 0.2s, height 0.2s;
 	transition: width 0.2s, height 0.2s;
 
@@ -175,7 +172,7 @@ body {
 	border-radius: 10px;
 	padding: 10px;
 
-	transform: translateX(20px);	
+	transform: translateX(20px);
 	opacity: 0;
 	
 	-webkit-transition: transform 0.2s, opacity 0.3s;
@@ -183,14 +180,25 @@ body {
 	-webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
 	transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
 
-	display: none;
+	display: block;
 }
 
 #map .mode-icon:hover + .mode-text {
-	display: block;
 	opacity: 1;
 	transform: translateX(0px);
-	
+	z-index: 5;
+}
+
+#map .mode-color {
+	margin: auto 0 24px 24px;
+}
+
+#map .mode-color span {
+	display: block;
+	width: 10px;
+	height: 10px;
+
+	border: 3px solid var(--map-dark-primary-color);
 }
 
 /*******************/
@@ -265,7 +273,7 @@ body {
 
 	border-left: 1px solid lightgrey;
 
-	background: #515158;
+	background: white;
 
 	height: 100%;
 	width: 15%;
@@ -275,21 +283,20 @@ body {
 }
 
 #map #list-panel input {
-	width: 85%;
-	font-size: 80%;
-	align-self: center;
+	width: 100%;
+	font-size: 120%;
 	
 	border: none;
 	box-sizing: border-box;
-	padding: 8px 10px;
-	margin: 12px 0;
-	border-radius: 15px;	
+	padding: 18px 30px;
+
+	color: var(--map-text-color);
+	background-color: var(--map-primary-color);
 }
 
 #map #list-places {
 	overflow-x: hidden;
-
-	background: #ffffff;
+	background: white;
 }
 
 #map #list-places .list {
@@ -297,16 +304,21 @@ body {
 	font-size: 90%;
 	color: #aaaac5;
 	margin: 0;
-	padding-left: 30px;
+	padding-left: 12.5%;
+	width: 75%;
 }
 
 #map #list-places li {
-	margin: 14px 0;
+	margin: 18px 0;
 }
 
 #map #list-places li:hover {
 	color: black;
 	cursor: pointer;
+}
+
+#map #list-places li .room {
+	float:right;
 }
 
 /***************/
@@ -520,6 +532,22 @@ body {
 	cursor: default;
 }
 
+#map .classrooms-selector .revert {
+	display: none;
+}
+
+#map .classrooms-selector .revert svg {
+	display: inline-block;
+	/*padding: 0 5px;*/
+	fill: var(--map-text-color);
+
+	width: 18px;
+	height: 18px;
+
+	vertical-align: middle;
+	cursor: pointer;
+}
+
 #map .classrooms-selector .control {
 	background: var(--map-primary-color);
 	border-radius: 24px;
@@ -534,7 +562,7 @@ body {
 	box-shadow: 1px 2px 2px #00000050;
 }
 
-#map .classrooms-selector .arrow {
+#map .classrooms-selector .class--icon {
 	width: 24px;
 	height: 24px;
 
@@ -543,7 +571,7 @@ body {
 	cursor: pointer;
 }
 
-#map .classrooms-selector .arrow:hover {
+#map .classrooms-selector .class--icon:hover {
 	background: var(--map-dark-primary-color);
 }
 
@@ -554,6 +582,99 @@ body {
 	stroke-linejoin: round;
 
 	fill: none;
+}
+
+#map .classrooms-selector .view svg {
+	fill: var(--map-text-color);
+	stroke: var(--map-text-color);
+
+	width: 24px;
+	height: 24px;
+}
+
+#map .classrooms-selector .pause svg {
+	/*stroke: var(--map-text-color);*/
+	fill: var(--map-text-color);
+
+	width: 20px;
+	height: 20px;
+	margin: 2px;
+}
+
+#map .classrooms-selector .pause_button {
+	display: none;
+}
+
+#map .classrooms-selector .pause .loader--icon {
+	border: 4px solid var(--map-text-color);
+	border-top: 4px solid var(--map-secondary-text-color);
+	border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	animation: spin 2s linear infinite;
+	display: none;
+}
+
+#map .classrooms-selector .view svg {
+	fill: var(--map-text-color);
+	stroke: var(--map-text-color);
+
+	width: 24px;
+	height: 24px;
+}
+
+#map .classrooms-selector .view-selection {
+	position: absolute;
+	right: 48px;
+	bottom: 50px;
+
+	background: var(--map-primary-color);
+	border-radius: 15px;
+	padding: 5px;
+
+	display: none;
+	flex-flow: column nowrap;
+}
+
+#map .classrooms-selector .view-selection input {
+	margin:0;
+	padding:0;
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	appearance:none;
+}
+
+#map .classrooms-selector .view-selection label {
+	cursor: pointer;
+	display: inline-block;
+
+	background: var(--map-primary-color);
+	border-radius: 15px;	
+	padding: 10px;
+	margin-bottom: 3px;
+
+	display: flex;
+	align-items: center;	
+}
+
+#map .classrooms-selector .view-selection label:hover {
+	background: var(--map-dark-primary-color);
+}
+
+#map .classrooms-selector .view-selection input:active + label {
+	background: var(--map-primary-color);
+}
+
+#map .classrooms-selector .view-selection input:checked + label {
+	background: var(--map-clicked-color);
+}
+
+#map .classrooms-selector .view-selection svg {
+	fill: var(--map-text-color);
+	stroke: var(--map-text-color);
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
 }
 
 #map .classrooms-selector .text {
@@ -631,7 +752,7 @@ body {
 /*          Loader            */
 /******************************/
 
-.loader {
+#map .loader {
 	position: absolute;
 	left: 50%;
 	top: 50%;
