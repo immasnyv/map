@@ -23,6 +23,14 @@ function MapHandler() {
    }
 
    // ******  Map color scheme handling  ******
+   this.setColors = function(primaryColor, primaryDarkColor, clickedColor, textColor, secondarytextColor) {
+       this_mapHandler.mapEl.style.setProperty('--map-primary-color', primaryColor);
+       this_mapHandler.mapEl.style.setProperty('--map-dark-primary-color', primaryDarkColor);
+       this_mapHandler.mapEl.style.setProperty('--map-clicked-color', clickedColor);
+       this_mapHandler.mapEl.style.setProperty('--map-text-color', textColor);
+       this_mapHandler.mapEl.style.setProperty('--map-secondary-text-color', secondarytextColor);
+    }
+
    this.setPrimaryColor = function(accentColor) {
        this.mapEl.style.setProperty('--map-primary-color', accentColor);
    }
@@ -89,6 +97,14 @@ function MapHandler() {
        document.getElementById("stairs-" + level).setAttribute("style", "left: calc((100%/1200) * " + x + " - 2px); top: calc((100%/800) * " + y + ");");
    }
 
+    this.showStairsS5Pin = function() {
+        document.getElementById("stairs-1b").classList.add('pin--active');
+    }
+
+    this.setStairsS5PinPosition = function(x, y) {
+        document.getElementById("stairs-1b").setAttribute("style", "left: calc((100%/1200) * " + x + " - 2px); top: calc((100%/800) * " + y + ");");
+    }
+
    
 
    // Remove all pins
@@ -98,7 +114,7 @@ function MapHandler() {
        this.removeTargetPin(endNode);
        this.removeTargetHint(endNode.level - 1);
 
-       if(Math.abs(startNode.level - endNode.level) == 2) {
+       /*if(Math.abs(startNode.level - endNode.level) == 2) {
            this.removeStairsPin(1);
            this.removeStairsPin(0);
        } else if(Math.abs(startNode.level - endNode.level) == 1) {
@@ -107,7 +123,11 @@ function MapHandler() {
            } else {
                this.removeStairsPin(1);
            }
-       }
+       }*/
+
+       this.removeStairsPin(1);
+       this.removeStairsPin(0);
+       this.removeStairsS5Pin();
    }
 
    this.removeHerePin = function(startNode) {
@@ -129,6 +149,10 @@ function MapHandler() {
    this.removeStairsPin = function(level) {
        this.schoolLevels[level].querySelector('.stairs').classList.remove('pin--active');
    }
+
+    this.removeStairsS5Pin = function() {
+        document.getElementById("stairs-1b").classList.remove('pin--active');
+    }
    
    //******  Svg map handling ******
 
@@ -231,7 +255,6 @@ function MapHandler() {
 
    // ******  3D mouse rotate interaction handlers  ******
    this.minX = parseInt(getComputedStyle(this.mapEl).getPropertyValue('--map-rotateX'));
-   this.drag = false;
    this.x0 = null;
    this.y0 = null;
    this.rotX = 0;
@@ -239,12 +262,12 @@ function MapHandler() {
    this.scaleZ = 1;
 
    this.init3Dmouse = function() {
-       this.mapEl.addEventListener('mousedown', this.lock, false);
-       this.mapEl.addEventListener('touchstart', this.lock, false);
-       this.mapEl.addEventListener('wheel', this.zoom, false);
+       this.school.addEventListener('mousedown', this.lock, false);
+       this.school.addEventListener('touchstart', this.lock, false);
+       this.school.addEventListener('wheel', this.zoom, false);
 
-       this.mapEl.addEventListener('mouseup', this.release, false);
-       this.mapEl.addEventListener('touchend', this.release, false);
+       this.school.addEventListener('mouseup', this.release, false);
+       this.school.addEventListener('touchend', this.release, false);
    }
 
    this.getE = function(ev) {
@@ -253,13 +276,11 @@ function MapHandler() {
 
    this.lock = function(ev) {
        let e = this_mapHandler.getE(ev);
-       console.log(ev.target + '   ' + ev.currentTarget);
 
-       if(e.button == 0 && ev.target === ev.currentTarget) {
-           this_mapHandler.mapEl.addEventListener('mousemove', this_mapHandler.rotate, false);
-           this_mapHandler.mapEl.addEventListener('touchmove', this_mapHandler.rotate, false);           
+       if(e.button == 0 /*&& ev.currentTarget.contains(ev.target)ev.target === ev.currentTarget*/) {
+           this_mapHandler.school.addEventListener('mousemove', this_mapHandler.rotate, false);
+           this_mapHandler.school.addEventListener('touchmove', this_mapHandler.rotate, false);           
 
-           this_mapHandler.drag = true;
            this_mapHandler.x0 = e.clientX;
            this_mapHandler.y0 = e.clientY;
        } else if(e.button == 1) {
@@ -267,6 +288,9 @@ function MapHandler() {
            this_mapHandler.rotY = 0;
            this_mapHandler.schoolLevelsEl.style.setProperty('--x', '0deg');
            this_mapHandler.schoolLevelsEl.style.setProperty('--y', '0deg');
+
+           this_mapHandler.scaleZ = 1;
+           this_mapHandler.schoolLevelsEl.style.setProperty('--z', '1');
        }
    }
 
@@ -275,39 +299,34 @@ function MapHandler() {
    this.Az = 0.05;
 
    this.rotate = function(ev) {
-       if(this_mapHandler.drag) {
-           let e = this_mapHandler.getE(ev),
-               x = e.clientX, y = e.clientY,
-               dx = x - this_mapHandler.x0, dy = y - this_mapHandler.y0;
-               
-           if(dx != 0 || dy != 0) {
-               this_mapHandler.rotX = Math.min(Math.max(this_mapHandler.rotX + (-dy) * this_mapHandler.Ax, -this_mapHandler.minX), 90 - this_mapHandler.minX); // rotace kolem osy X je posun v y
-               this_mapHandler.rotY += (-dx) * this_mapHandler.Ay;
+        let e = this_mapHandler.getE(ev),
+            x = e.clientX, y = e.clientY,
+            dx = x - this_mapHandler.x0, dy = y - this_mapHandler.y0;
+            
+        if(dx != 0 || dy != 0) {
+            this_mapHandler.rotX = Math.min(Math.max(this_mapHandler.rotX + (-dy) * this_mapHandler.Ax, -this_mapHandler.minX), 90 - this_mapHandler.minX); // rotace kolem osy X je posun v y
+            this_mapHandler.rotY += (-dx) * this_mapHandler.Ay;
 
-               this_mapHandler.x0 = x;
-               this_mapHandler.y0 = y;
+            this_mapHandler.x0 = x;
+            this_mapHandler.y0 = y;
 
-               this_mapHandler.schoolLevelsEl.style.setProperty('--x', (this_mapHandler.rotX).toFixed(2) + 'deg');
-               this_mapHandler.schoolLevelsEl.style.setProperty('--y', (this_mapHandler.rotY).toFixed(2) + 'deg');
-           }
-       }
+            this_mapHandler.schoolLevelsEl.style.setProperty('--x', (this_mapHandler.rotX).toFixed(2) + 'deg');
+            this_mapHandler.schoolLevelsEl.style.setProperty('--y', (this_mapHandler.rotY).toFixed(2) + 'deg');
+        }
    }
 
    this.zoom = function(ev) {
        if(ev.target === ev.currentTarget) {
-            this_mapHandler.scaleZ += this_mapHandler.Az * ev.deltaY;
+            this_mapHandler.scaleZ = Math.min(Math.max(this_mapHandler.scaleZ + this_mapHandler.Az * ev.deltaY, 0.45), 3);
             this_mapHandler.schoolLevelsEl.style.setProperty('--z', (this_mapHandler.scaleZ).toFixed(2));
        }
    }
 
    this.release = function(ev) {
-       if(this_mapHandler.drag) {
-           this_mapHandler.drag = false;
-           this_mapHandler.x0 = this_mapHandler.y0 = null;
+        this_mapHandler.x0 = this_mapHandler.y0 = null;
 
-           this_mapHandler.mapEl.removeEventListener('mousemove', this_mapHandler.rotate, false);
-           this_mapHandler.mapEl.removeEventListener('touchmove', this_mapHandler.rotate, false);
-       }
+        this_mapHandler.school.removeEventListener('mousemove', this_mapHandler.rotate, false);
+        this_mapHandler.school.removeEventListener('touchmove', this_mapHandler.rotate, false);
    }
 
    this_mapHandler = this;

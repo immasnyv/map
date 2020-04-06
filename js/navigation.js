@@ -68,6 +68,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
             if((prevNode.x == middleNode.x && middleNode.x == nextNode.x) || (prevNode.y == middleNode.y && middleNode.y == nextNode.y)) {
                 this.nodeChain.splice(i, 1);
+                i--; // 1 element deleted -> index needs to be moved - fix for not simplifying 1 straight line from 4 nodes
             }
         }
 		
@@ -88,17 +89,17 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         this.lineIndex = 0;
         this.lineWaypoints = [];
 
-        mapHandler.resetLevelsTransparency();
+        //mapHandler.resetLevelsTransparency();
     }
 
     this.startNavigation = function() {
         // make level above startNode/endNode's level transparent if there's chance that the path and/or here/target pin couldn't be seen throught it
-        if (/*this_nav.startNode.y > 510 &&*/ this_nav.startNode.level < 3) {
+        /*if (/this_nav.startNode.y > 510 &&/ this_nav.startNode.level < 3) {
             mapHandler.makeLevelTransparent(this_nav.startNode.level);
         }
-        if (/*this_nav.endNode.y > 510 &&*/ this_nav.endNode.level < 3) {
+        if (/this_nav.endNode.y > 510 &&/ this_nav.endNode.level < 3) {
             mapHandler.makeLevelTransparent(this_nav.endNode.level);
-        }
+        }*/
 
         // highlight start room
         mapHandler.highlightRoom(this_nav.startNode.room);
@@ -173,9 +174,9 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             this_nav.line.linePosition = 0;
 
             if (this.nodeChain[this_nav.nodeChainIndex].includes("S")) {
-                let node = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]];
-                let newLevel = this.nodeChain[this_nav.nodeChainIndex + 1][1];
-				let stairs = (newLevel < this_nav.currentLevel) ? -1 : 0;
+                let node = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]]; // get stairs node object
+                let newLevel = this.nodeChain[this_nav.nodeChainIndex + 1][1]; // get new level from node's name (e.g. B3 -> 3 level)
+				let stairs = (newLevel < this_nav.currentLevel) ? -1 : 0; // z direction of path
 
                 do {
 					this_nav.canvas[this_nav.currentLevel - 1].moveTo(node.x, 800 - node.y);
@@ -184,8 +185,13 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 					this_nav.canvas[this_nav.currentLevel - 1].stroke();
 					this_nav.canvas[this_nav.currentLevel - 1].fill();
                     
-                    mapHandler.setStairsPinPosition(node.x, 800 - node.y, this_nav.currentLevel + stairs)
-					mapHandler.showStairsPin(this_nav.currentLevel - 1 + stairs);
+                    if(this.nodeChain[this_nav.nodeChainIndex] == 'S5') {
+                        mapHandler.setStairsS5PinPosition(node.x, 800 - node.y);
+                        mapHandler.showStairsS5Pin();
+                    } else {
+                        mapHandler.setStairsPinPosition(node.x, 800 - node.y, this_nav.currentLevel + stairs);
+                        mapHandler.showStairsPin(this_nav.currentLevel - 1 + stairs);
+                    }
 					
 					this_nav.currentLevel = (newLevel > this_nav.currentLevel) ? (this_nav.currentLevel + 1) : (this_nav.currentLevel - 1);
                 } while (this_nav.currentLevel != newLevel);
@@ -292,5 +298,63 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         document.querySelector('#map .navigator').style.display = 'flex';
     }
 
+    var pickInput;
+
+    this.startPickRoom = function(ev) {
+        pickInput = ev.currentTarget;
+        let rooms = [].slice.call(document.querySelectorAll('#map .map__space'));
+        rooms.forEach(function(room) {
+            room.style.setProperty('pointer-events', 'visiblePainted');
+        });
+
+        let levelsEl = document.querySelector('#map .levels');
+        levelsEl.addEventListener("mousedown", this_nav.roomClicked);
+    }
+
+    this.roomClicked = function(ev) {
+        let levelsEl = document.querySelector('#map .levels');
+        levelsEl.removeEventListener("mousedown", this_nav.roomClicked);
+        if(!isNaN(ev.target.id)) {
+            pickInput.value = ev.target.id;
+        }
+
+        let rooms = [].slice.call(document.querySelectorAll('#map .map__space'));
+        rooms.forEach(function(room) {
+            room.style.setProperty('pointer-events', 'none');
+        });
+    }
+
+    this.endPickRoom = function(ev) {
+        let levelsEl = document.querySelector('#map .levels');
+        levelsEl.removeEventListener("mousedown", this_nav.roomClicked);
+
+        let rooms = [].slice.call(document.querySelectorAll('#map .map__space'));
+        rooms.forEach(function(room) {
+            room.style.setProperty('pointer-events', 'none');
+        });
+    }
+
+    this.initControls = function() {
+        let startInput = document.querySelector("#map .navigator .input-start");
+        let endInput = document.querySelector("#map .navigator .input-target");
+
+        startInput.addEventListener("focusin", function(ev) {
+            this_nav.startPickRoom(ev);
+        });
+
+        startInput.addEventListener("focusout", function(ev) {
+            this_nav.endPickRoom(ev);
+        });
+
+        endInput.addEventListener("focusin", function(ev) {
+            this_nav.startPickRoom(ev);
+        });
+
+        endInput.addEventListener("focusout", function(ev) {
+            this_nav.endPickRoom(ev);
+        });
+    }
+
     this_nav = this;
+    this.initControls();
 }

@@ -69,8 +69,9 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
 
         let viewButtonInputs = [].slice.call(document.querySelectorAll('#map .classrooms-selector .view-selection input'));
         viewButtonInputs.forEach(function(input) {
-            input.addEventListener("click", function(ev) {
+            input.addEventListener("change", function(ev) {
                 if(input.checked) {
+                    console.log('changed');
                     let avalaibleModes = ['subject', 'teacher', 'class'];
                     this_rooms.refresh(avalaibleModes[viewButtonInputs.indexOf(input)]);
                 }
@@ -116,9 +117,6 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
                 update_active = true;
             }
         });
-        
-        this_rooms.updateClassrooms();
-        update = setInterval(this_rooms.updateClassrooms, 5000);
     }
 
     this.updateLessonInInfo = function(infoBar, lesson) {
@@ -258,7 +256,6 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
             this_rooms.updateClassrooms();
             update = setInterval(this_rooms.updateClassrooms, 5000);
         }
-        
     }
 
     this_rooms = this;

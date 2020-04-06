@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<title>Mapa - Gymnázium Ostrava-Hrabůvka</title>
 		<meta name="author" content="Vojtěch Masný" />
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -499,6 +499,13 @@
                         </svg>
                         <canvas class="level__canvas" id="level--1-navigator" width="1200px" height="800px"></canvas>
                         <a class="pin stairs" id="stairs-1">
+                            <span class="pin__icon">
+                                <svg class="icon icon--pin">
+                                    <use xlink:href="#icon-stairs"></use>
+                                </svg>
+                            </span>
+						</a>
+						<a class="pin stairs" id="stairs-1b">
                             <span class="pin__icon">
                                 <svg class="icon icon--pin">
                                     <use xlink:href="#icon-stairs"></use>
@@ -1230,39 +1237,46 @@
 			<!-- /info -->			
 			
 			<div class="mode-list">
-				<div class="mode-item mode-item--active" data-mode="Classrooms">
-					<span class="mode-icon">
-						<!--<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47zm-5 .99l3-1.01v11.7l-3 1.16V6.46zm14 11.08l-3 1.01V6.86l3-1.16v11.84z"/>
-						</svg>-->
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/>
-							<path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/>
-						</svg>
-					</span>
+				<input class="mode-switch" data-mode="Classrooms" id="map-mode-classrooms" type="radio" name="map-mode" checked="checked" autocomplete="off"/>
+				<label class="mode-item" for="map-mode-classrooms">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+						<path d="M0 0h24v24H0V0z" fill="none"/>
+						<path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/>
+					</svg>
 					<span class="mode-text">Učebny</span>
-				</div>
-				<div class="mode-item" data-mode="Navigator">
-					<span class="mode-icon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0V0z" fill="none"/>
-							<path d="M12 7.27l4.28 10.43-3.47-1.53-.81-.36-.81.36-3.47 1.53L12 7.27M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/>
-						</svg>
-					</span>
+				</label>
+
+				<input class="mode-switch" data-mode="Navigator" id="map-mode-navigator" type="radio" name="map-mode" autocomplete="off"/>
+				<label class="mode-item" for="map-mode-navigator">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+						<path d="M0 0h24v24H0V0z" fill="none"/>
+						<path d="M12 7.27l4.28 10.43-3.47-1.53-.81-.36-.81.36-3.47 1.53L12 7.27M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z"/>
+					</svg>
 					<span class="mode-text">Navigace</span>
-				</div>
-				<div class="mode-item" data-mode="Staff">
-					<span class="mode-icon">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-							<path d="M0 0h24v24H0z" fill="none"/>
-							<path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/>
-						</svg>
-					</span>
+				</label>
+
+				<input class="mode-switch" data-mode="Staff" id="map-mode-staff" type="radio" name="map-mode" autocomplete="off"/>
+				<label class="mode-item" for="map-mode-staff">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+						<path d="M0 0h24v24H0z" fill="none"/>
+						<path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/>
+					</svg>
 					<span class="mode-text">Zaměstnanci</span>
-				</div>
+				</label>
+
 				<div class="mode-color">
-					<span class="mode-icon">
-					</span>
+					<input id="map-color-green" type="radio" name="map-color" checked="checked" autocomplete="off"/>
+					<label class="green" for="map-color-green">
+					</label>
+					<input id="map-color-red" type="radio" name="map-color" autocomplete="off"/>
+					<label class="red" for="map-color-red">
+					</label>
+					<input id="map-color-blue" type="radio" name="map-color" autocomplete="off"/>
+					<label class="blue" for="map-color-blue">
+					</label>
+					<input id="map-color-yellow" type="radio" name="map-color" autocomplete="off"/>
+					<label class="yellow" for="map-color-yellow">
+					</label>
 				</div>
 			</div>
 			<!-- /detail list box -->
@@ -1270,7 +1284,7 @@
 			<div class="loader"></div>
 			<!-- /loader -->
 			
-			<span class="classroom-slider-text">Hodina: 1.s</span>
+			<span class="classroom-slider-text">Hodina: 1</span>
 
 			<div class="classrooms-selector">
 				<div class="info">
@@ -1290,9 +1304,6 @@
 						</svg>
 					</span>
 					<span class="class--icon pause" title="Obnovit">
-						<!--<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-							<path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-						</svg>-->
 						<svg class="play_button" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 494.148 494.148">
 							<path d="M405.284,201.188L130.804,13.28C118.128,4.596,105.356,0,94.74,0C74.216,0,61.52,16.472,61.52,44.044v406.124
 							c0,27.54,12.68,43.98,33.156,43.98c10.632,0,23.2-4.6,35.904-13.308l274.608-187.904c17.66-12.104,27.44-28.392,27.44-45.884
@@ -1324,8 +1335,8 @@
 						</svg>
 					</span>
 					<div class="view-selection">
-						<input id="view-subject" type="radio" name="view"/>
-						<label for="view-subject">
+						<input id="map-view-subject" type="radio" name="map-view" checked="checked" autocomplete="off"/>
+						<label for="map-view-subject">
 							<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 514.56 514.56" >
 								<path d="M499.2,335.967h-12.8V51.807c0-12.8-10.24-23.04-25.6-23.04H284.16l-2.56-10.24c-2.56-10.24-12.8-17.92-25.6-17.92
 								s-20.48,5.12-25.6,17.92l-2.56,10.24H51.2c-15.36,0-25.6,10.24-25.6,23.04v284.16H12.8c-7.68,0-12.8,5.12-12.8,12.8v25.6
@@ -1339,8 +1350,8 @@
 							<span>Předměty</span>
 						</label>
 
-						<input id="view-staff" type="radio" name="view"/>
-						<label for="view-staff">
+						<input id="map-view-staff" type="radio" name="map-view" autocomplete="off"/>
+						<label for="map-view-staff">
 							<svg viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
 								<path d="m210.351562 246.632812c33.882813 0 63.222657-12.152343 87.195313-36.128906 23.972656-23.972656 36.125-53.304687
 									36.125-87.191406 0-33.875-12.152344-63.210938-36.128906-87.191406-23.976563-23.96875-53.3125-36.121094-87.191407-36.121094
@@ -1362,8 +1373,8 @@
 							<span>Učitelé</span>
 						</label>
 
-						<input id="view-classes" type="radio" name="view"/>
-						<label for="view-classes">
+						<input id="map-view-classes" type="radio" name="map-view" autocomplete="off"/>
+						<label for="map-view-classes">
 							<svg xmlns="http://www.w3.org/2000/svg"x="0" y="0" width="31.99px" height="31.99px" viewBox="0 0 31.99 31.99">
 								<ellipse cx="6.737" cy="22.946" rx="2.711" ry="2.664"/>
 								<polygon points="6.782,27.188 5.751,26.011 3.358,26.439 3.358,31.195 4.211,31.195 4.253,31.99 9.148,31.99 9.189,31.195 
@@ -1404,15 +1415,15 @@
 				
 			<div class="navigator">
 				<span class="input-label">Navigace</span>
-				<input type="number" max=999 min=0 placeholder="Start" id="input-start">
-				<input type="number" max=999 min=0 placeholder="Cíl" id="input-target">
-				<input type="button" value="Navigovat" id="input-button" onclick="start()">
+				<input type="number" max=999 min=0 placeholder="Start" class="input-start">
+				<input type="number" max=999 min=0 placeholder="Cíl" class="input-target">
+				<input type="button" value="Navigovat" class="input-button" onclick="start()">
 			</div>
 			<!-- /navigator box -->
 			
 			<div id="list-panel">
 				<input type="text" results=5 class="search" maxlength="25" placeholder="Hledat...">
-				<div id="list-places"> 
+				<div id="list-places">
 					<ul class="list">
 						<!--<li data-room="308"><span class="name">Bebjaková Edita</span></li>
 						<li data-room="101"><span class="name">Böhmová Michaela</span></li>
@@ -1476,14 +1487,6 @@
 				</div>
 			</div>
 			<!-- /list panel -->
-            
-           <!--<div class="list-detail">
-			    <span class="detail-exit" onclick="this.parentElement.style.opacity = '0'">X</span>
-				<span class="detail-name"></span>
-                <span class="detail-time"></span>
-                <span class="detail-job"></span>
-			</div>
-			 /detail list box -->
         </div>
 		<!-- /map -->
 		
@@ -1519,18 +1522,13 @@
 
 				mapHandler.makeLevelTransparent(1);
 				mapHandler.makeLevelTransparent(2);
-				
+
+				classrooms.show();
 				var currentMapMode = 'Classrooms';
 
-				let modeButtons = document.querySelectorAll('#map .mode-item');
+				let modeButtons = document.querySelectorAll('#map .mode-switch');
 				modeButtons.forEach(function(modeButton) {
-					modeButton.addEventListener("click", function(ev) {
-
-						modeButtons.forEach(function(btn) {
-							btn.classList.remove('mode-item--active');
-						});
-
-						ev.currentTarget.classList.add('mode-item--active');
+					modeButton.addEventListener("change", function(ev) {
 						switch (ev.currentTarget.getAttribute('data-mode')) {
 							default:
 							case 'Classrooms':
@@ -1566,13 +1564,27 @@
 
 						currentMapMode = ev.currentTarget.getAttribute('data-mode');
 					});
-				});				
+				});
+				
+				let colorButtonInputs = [].slice.call(document.querySelectorAll('#map .mode-color input'));
+				let colorButtonLabels = [].slice.call(document.querySelectorAll('#map .mode-color label'));
+				colorButtonInputs.forEach(function(input) {
+					input.addEventListener("change", function(ev) {
+						console.log('change');
+						let bg = getComputedStyle(colorButtonLabels[colorButtonInputs.indexOf(input)]).getPropertyValue('background-color');
+						let darkBg = ghrabApi.shadeColor(bg, -40);
+						let clickedBg = ghrabApi.shadeColor(bg, -60);
+						let text = getComputedStyle(colorButtonLabels[colorButtonInputs.indexOf(input)]).getPropertyValue('color');
+						let darkText = ghrabApi.shadeColor(text, -50);
+						mapHandler.setColors(bg, darkBg, clickedBg, text, darkText);
+					});
+				});
 			}
 
 			function navigationEnded() {
-				let startInput = document.getElementById("input-start");
-				let endInput = document.getElementById("input-target");
-				let buttonInput = document.getElementById("input-button");
+				let startInput = document.querySelector("#map .navigator .input-start");
+				let endInput = document.querySelector("#map .navigator .input-target");
+				let buttonInput = document.querySelector("#map .navigator .input-button");
 
 				startInput.disabled = false;
 				endInput.disabled = false;
@@ -1582,9 +1594,9 @@
 			function start() {
 				navigation.clear();
 
-				let startInput = document.getElementById("input-start");
-				let endInput = document.getElementById("input-target");
-				let buttonInput = document.getElementById("input-button");
+				let startInput = document.querySelector("#map .navigator .input-start");
+				let endInput = document.querySelector("#map .navigator .input-target");
+				let buttonInput = document.querySelector("#map .navigator .input-button");
 
 				startInput.disabled = true;
 				endInput.disabled = true;
