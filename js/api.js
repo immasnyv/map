@@ -85,9 +85,9 @@ function GhrabApi() {
         color = color.substring(color.indexOf('(') + 1, color.indexOf(')'));
         let rgb = color.split(',');
 
-        rgb[0] = parseInt(rgb[0]) + addition; // r
-        rgb[1] = parseInt(rgb[1]) + addition; // g
-        rgb[2] = parseInt(rgb[2]) + addition; // b
+        for(let i = 0; i < 3; i++) {
+            rgb[i] = Math.min(Math.max(parseInt(rgb[i]) + addition, 0), 255);
+        }
 
         return "rgb(" + [rgb[0], rgb[1], rgb[2]].join(",") + ")";
     }

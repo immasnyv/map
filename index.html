@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
 		<title>Mapa - Gymnázium Ostrava-Hrabůvka</title>
 		<meta name="author" content="Vojtěch Masný" />
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -1299,7 +1299,7 @@
 				</div>
 				<div class="control">
 					<span class="class--icon arrow arrow__back" title="Předchozí den">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: none" viewBox="0 0 24 24">
 							<polyline  points="14,6 8,12 14,18"/>
 						</svg>
 					</span>
@@ -1322,6 +1322,21 @@
 						<input type="range" min="1" max="10" value="1" class="slider-input">
 					</div>
 					<span class="text">10</span>
+					<span class="class--icon minus">
+						<svg viewBox="0 -192 426.66667 426"xmlns="http://www.w3.org/2000/svg">
+							<path d="m405.332031 43h-384c-11.773437 0-21.332031-9.558594-21.332031-21.332031 0-11.777344 9.558594-21.335938
+							21.332031-21.335938h384c11.777344 0 21.335938 9.558594 21.335938 21.335938 0 11.773437-9.558594 21.332031-21.335938 21.332031zm0 0"/>
+						</svg>
+					</span>
+					<span class="class--icon plus">
+						<svg viewBox="0 0 426.66667 426.66667" xmlns="http://www.w3.org/2000/svg">
+							<path d="m405.332031 192h-170.664062v-170.667969c0-11.773437-9.558594-21.332031-21.335938-21.332031-11.773437 0-21.332031
+							 9.558594-21.332031 21.332031v170.667969h-170.667969c-11.773437 0-21.332031 9.558594-21.332031 21.332031 0 11.777344 9.558594
+							  21.335938 21.332031 21.335938h170.667969v170.664062c0 11.777344 9.558594 21.335938 21.332031 21.335938 11.777344 0 
+							  21.335938-9.558594 21.335938-21.335938v-170.664062h170.664062c11.777344 0 21.335938-9.558594 21.335938-21.335938 0-11.773437
+							  -9.558594-21.332031-21.335938-21.332031zm0 0"/>
+						</svg>
+					</span>
 					<span class="class--icon view" title="Zobrazení">
 						<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 511.999 511.999">
 							<path d="M508.745,246.041c-4.574-6.257-113.557-153.206-252.748-153.206S7.818,239.784,3.249,246.035
@@ -1375,7 +1390,7 @@
 
 						<input id="map-view-classes" type="radio" name="map-view" autocomplete="off"/>
 						<label for="map-view-classes">
-							<svg xmlns="http://www.w3.org/2000/svg"x="0" y="0" width="31.99px" height="31.99px" viewBox="0 0 31.99 31.99">
+							<svg xmlns="http://www.w3.org/2000/svg"x="0" y="0" style="stroke: none" viewBox="0 0 31.99 31.99">
 								<ellipse cx="6.737" cy="22.946" rx="2.711" ry="2.664"/>
 								<polygon points="6.782,27.188 5.751,26.011 3.358,26.439 3.358,31.195 4.211,31.195 4.253,31.99 9.148,31.99 9.189,31.195 
 									9.827,31.195 9.827,26.439 7.783,26.011"/>
@@ -1405,7 +1420,7 @@
 						</label>
 					</div>
 					<span class="class--icon arrow arrow__forward" title="Další den">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"style="fill: none" viewBox="0 0 24 24">
 							<polyline points="10,6 17,12 10,18"/>
 						</svg>
 					</span>
@@ -1414,10 +1429,35 @@
 			<!-- /classrooms setter -->
 				
 			<div class="navigator">
-				<span class="input-label">Navigace</span>
+				<!--<span class="input-label">Navigace</span>-->
 				<input type="number" max=999 min=0 placeholder="Start" class="input-start">
 				<input type="number" max=999 min=0 placeholder="Cíl" class="input-target">
 				<input type="button" value="Navigovat" class="input-button" onclick="start()">
+			</div>
+			<div class="navigator-detail">
+				<div>
+					<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+						<path d="M400,368c-20.864,0-38.464,13.408-45.056,32H157.056c-6.624-18.592-24.192-32-45.056-32c-26.496,0-48,21.504-48,48
+							c0,26.496,21.504,48,48,48c20.864,0,38.464-13.408,45.056-32h197.888c6.624,18.592,24.192,32,45.056,32c26.496,0,48-21.504,48-48
+							C448,389.504,426.496,368,400,368z"/>
+						<path d="M112,48C50.24,48,0,98.24,0,160c0,57.472,89.856,159.264,100.096,170.688c3.04,3.36,7.36,5.312,11.904,5.312
+							s8.864-1.952,11.904-5.312C134.144,319.264,224,217.472,224,160C224,98.24,173.76,48,112,48z M112,208c-26.496,0-48-21.504-48-48
+							c0-26.496,21.504-48,48-48c26.496,0,48,21.504,48,48C160,186.496,138.496,208,112,208z"/>
+						<path d="M400,48c-61.76,0-112,50.24-112,112c0,57.472,89.856,159.264,100.096,170.688c3.04,3.36,7.36,5.312,11.904,5.312
+							s8.864-1.952,11.904-5.312C422.144,319.264,512,217.472,512,160C512,98.24,461.76,48,400,48z M400,208c-26.496,0-48-21.504-48-48
+							c0-26.496,21.504-48,48-48c26.496,0,48,21.504,48,48C448,186.496,426.496,208,400,208z"/>
+					</svg>
+					<span class="navigator-distance">0</span> m</div>
+				<div>
+					<svg class="icon">
+						<use xlink:href="#icon-footsteps"></use>
+					</svg>
+					<span class="navigator-steps">0</span></div>
+				<div>
+					<svg class="icon" viewBox="0 0 384 384" xmlns="http://www.w3.org/2000/svg">
+						<path d="m343.59375 101.039062c-7.953125 3.847657-11.28125 13.417969-7.433594 21.367188 10.511719 21.714844 15.839844 45.121094 15.839844 69.59375 0 88.222656-71.777344 160-160 160s-160-71.777344-160-160 71.777344-160 160-160c36.558594 0 70.902344 11.9375 99.328125 34.519531 6.894531 5.503907 16.976563 4.351563 22.480469-2.566406 5.503906-6.914063 4.351562-16.984375-2.570313-22.480469-33.652343-26.746094-76-41.472656-119.238281-41.472656-105.863281 0-192 86.136719-192 192s86.136719 192 192 192 192-86.136719 192-192c0-29.335938-6.40625-57.449219-19.039062-83.527344-3.839844-7.96875-13.441407-11.289062-21.367188-7.433594zm0 0"/><path d="m192 64c-8.832031 0-16 7.167969-16 16v112c0 8.832031 7.167969 16 16 16h80c8.832031 0 16-7.167969 16-16s-7.167969-16-16-16h-64v-96c0-8.832031-7.167969-16-16-16zm0 0"/>
+					</svg>
+					<span class="navigator-time">0</span> s</div>				
 			</div>
 			<!-- /navigator box -->
 			

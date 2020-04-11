@@ -1,8 +1,8 @@
 function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
     // ******  Init  ******
-    this.init = function() {
-        this.initCanvas();
+    this.init = function(color) {
+        this.initCanvas(color);
         this.initNavigation();
     }
 
@@ -14,17 +14,14 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         document.getElementById("level--3-navigator").getContext('2d')
     ];
 
-    /**
-     * Initializate style of all canvases.
-     */
-    this.initCanvas = function() {
+    // Initializate style of all canvases     
+    this.initCanvas = function(color) {
         for (let i = 0; i <= mapHandler.schoolLevelsTotal - 1; i++) {
             this.canvas[i].lineWidth = 10;
             this.canvas[i].lineCap = 'round';
             this.canvas[i].lineJoin = 'round';
-            this.canvas[i].fillStyle = this.accentColor;
-            this.canvas[i].strokeStyle = this.accentColor;
-            this.canvas[i].imageSmoothingEnabled = true;
+            this.canvas[i].fillStyle = color;
+            this.canvas[i].strokeStyle = color;
             this.canvas[i].beginPath();
         }
     }
@@ -54,33 +51,42 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         let result = djikstra.calculate(this.mNodeMap.nodes, this_nav.startNode.name);
 
         this.nodeChain = result.shortestPaths[this_nav.endNode.name]; // shortest path to end node
-        let pathDistance = Math.round(result.shortestDistances[this_nav.endNode.name] / 9); // distance to end node
-
-        // simplify path (delete nodes, where the line goes in 180° angle) - fix for issue causing slowdowns on straight path
+        let pathDistance = result.shortestDistances[this_nav.endNode.name] / 12.86; // 12.86 pixels = 1 meter
+        
+        // simplify path (delete nodes, where the line goes in 180° angle) (fix for issue causing slowdowns on straight path)
         for(let i = 1; i < this.nodeChain.length - 1; i++) {
-            if(this.nodeChain[i].includes("S")) {
-                continue;
-            }
+            if(this.nodeChain[i][0] === "S") {
+                // add distance needed to walk up/down the stairs
+                let levelDifference = Math.abs(this.nodeChain[i - 1][1] - this.nodeChain[i + 1][1]);
+                pathDistance += levelDifference * 18.9; // 18.9 meters = 1 stairs, 27 steps = 1 stairs
+                
+                // do not include stairs in simplifying
+            } else {
+                let prevNode = this.mNodeMap.nodes[this.nodeChain[i - 1]];
+                let middleNode = this.mNodeMap.nodes[this.nodeChain[i]];
+                let nextNode = this.mNodeMap.nodes[this.nodeChain[i + 1]];
 
-            let prevNode = this.mNodeMap.nodes[this.nodeChain[i - 1]];
-            let middleNode = this.mNodeMap.nodes[this.nodeChain[i]];
-            let nextNode = this.mNodeMap.nodes[this.nodeChain[i + 1]];
-
-            if((prevNode.x == middleNode.x && middleNode.x == nextNode.x) || (prevNode.y == middleNode.y && middleNode.y == nextNode.y)) {
-                this.nodeChain.splice(i, 1);
-                i--; // 1 element deleted -> index needs to be moved - fix for not simplifying 1 straight line from 4 nodes
+                if((prevNode.x == middleNode.x && middleNode.x == nextNode.x) || (prevNode.y == middleNode.y && middleNode.y == nextNode.y)) {
+                    this.nodeChain.splice(i, 1);
+                    i--; // 1 element deleted -> index needs to be decremented (fix for not simplifying 1 straight line from 4+ nodes)
+                }
             }
         }
-		
-		console.log(this.nodeChain);
+        
+        let pathSteps = pathDistance * 1.43; // 1.43 steps = 1 meter
+        let pathTime = pathSteps / 1.3; // 1.3 steps/s (~ 3 km/h ~ 1 m/s)
 
-        return pathDistance;
+        console.log(this.nodeChain);
+        console.log("Distance: " + pathDistance);
+        console.log("Steps: " + pathSteps);
+        console.log("Time: " + pathTime);
+
+        return {distance: Math.round(pathDistance), steps: Math.round(pathSteps), time: Math.round(pathTime)};
     }
 
     // ******  Path drawing functions  ******
 
-    //mapHandler = new MapHandler();
-    this.ANIM_SPEED = 192;
+    this.ANIM_SPEED = 256;//192;
     this.REND_FPS = 60; // fps - default value
 
     this.initNavigation = function() {
@@ -139,7 +145,11 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
     // ----------------
 
     this.easeInOutCubic = function(t) {
-        return (t < 0.5) ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        return (t < 0.5) ? (2 * t * t) : (-1 + (4 - 2 * t) * t);
+    }
+
+    this.easeInOutSine = function(t) {
+        return -0.5 * (Math.cos(Math.PI * t) - 1);
     }
 
     this.drawPathPoint = function() {
@@ -155,17 +165,17 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         if (this_nav.line.linePosition == 0) {
             this_nav.line.node0 = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex - 1]];
             this_nav.line.node1 = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]];
+
             this_nav.line.dx = this_nav.line.node1.x - this_nav.line.node0.x;
             this_nav.line.dy = this_nav.line.node1.y - this_nav.line.node0.y;
-            this_nav.line.c = Math.round(Math.sqrt(Math.pow(this_nav.line.dx, 2) + Math.pow(this_nav.line.dy, 2)));
+            this_nav.line.c = Math.hypot(this_nav.line.dx, this_nav.line.dy);
         }
 
-        this_nav.line.linePosition = (this_nav.line.linePosition + (this_nav.ANIM_SPEED / this_nav.REND_FPS));
-        if(this_nav.line.linePosition > this_nav.line.c) this_nav.line.linePosition = this_nav.line.c;
-        let linePercent = this_nav.line.linePosition / this_nav.line.c;        
+        this_nav.line.linePosition += this_nav.ANIM_SPEED / this_nav.REND_FPS;
+        let linePercent = Math.min(this_nav.line.linePosition / this_nav.line.c, 1);
 
-        let x = this_nav.line.node0.x + this_nav.line.dx * this_nav.easeInOutCubic(linePercent);
-        let y = this_nav.line.node0.y + this_nav.line.dy * this_nav.easeInOutCubic(linePercent);
+        let x = this_nav.line.node0.x + this_nav.line.dx * this_nav.easeInOutSine(linePercent);
+        let y = this_nav.line.node0.y + this_nav.line.dy * this_nav.easeInOutSine(linePercent);
 
         this_nav.canvas[this_nav.currentLevel - 1].lineTo(x, 800 - y); // y axis in json (from Inkscape) is inverted
         this_nav.canvas[this_nav.currentLevel - 1].stroke();
@@ -173,7 +183,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         if (linePercent >= 1) {
             this_nav.line.linePosition = 0;
 
-            if (this.nodeChain[this_nav.nodeChainIndex].includes("S")) {
+            if (this.nodeChain[this_nav.nodeChainIndex][0] === "S") {
                 let node = this_nav.mNodeMap.nodes[this.nodeChain[this_nav.nodeChainIndex]]; // get stairs node object
                 let newLevel = this.nodeChain[this_nav.nodeChainIndex + 1][1]; // get new level from node's name (e.g. B3 -> 3 level)
 				let stairs = (newLevel < this_nav.currentLevel) ? -1 : 0; // z direction of path
@@ -185,7 +195,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 					this_nav.canvas[this_nav.currentLevel - 1].stroke();
 					this_nav.canvas[this_nav.currentLevel - 1].fill();
                     
-                    if(this.nodeChain[this_nav.nodeChainIndex] == 'S5') {
+                    if(this.nodeChain[this_nav.nodeChainIndex] === 'S5') {
                         mapHandler.setStairsS5PinPosition(node.x, 800 - node.y);
                         mapHandler.showStairsS5Pin();
                     } else {
@@ -230,23 +240,17 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         mapHandler.showTargetPin(this_nav.endNode);
         mapHandler.showTargetHint(this_nav.endNode.level - 1);
 
-        this_nav.setNavigatingState(false);
+        setTimeout(() => {this_nav.listener()}, 1000);
 
         /*setTimeout(function() {
             mapHandler.removeTargetHint(this_nav.endNode.level - 1);
         }, 1500);*/
     }
 
-    this.setNavigatingState = function(state) {
-        if(!state) setTimeout(function() {this_nav.listener(state)}, 1000);
-    }
-
     // ******  Main control functions  ******
     this.listener = function(val) {};
 
     this.navigate = function(endRoom, startRoom=0) {
-        this.setNavigatingState(true);
-
         let startRoomInfo = mapJSON[startRoom] || null;        
         let endRoomInfo = mapJSON[endRoom] || null;
 
@@ -257,14 +261,16 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         this.startNode = {name: "<" + startRoomInfo.level, x: startRoomInfo.x, y: startRoomInfo.y, level: startRoomInfo.level, room: startRoom};
         this.endNode = {name: ">" + endRoomInfo.level, x: endRoomInfo.x, y: endRoomInfo.y, level: endRoomInfo.level, room: endRoom};
 
-        // set color scheme
-        this.accentColor = mapHandler.getPrimaryColor();
-
         // configure start and end pins
         mapHandler.setTargetHintText(this.endNode.level - 1, endRoom);
 
-        this.init();
-        let pathDist = this.computePath();
+        this.init(mapHandler.getPrimaryColor());
+        let path = this.computePath();
+
+        document.querySelector("#map .navigator-detail .navigator-distance").innerHTML = path.distance;
+        document.querySelector("#map .navigator-detail .navigator-steps").innerHTML = path.steps;
+        document.querySelector("#map .navigator-detail .navigator-time").innerHTML = path.time;
+        document.querySelector("#map .navigator-detail").style.display = 'initial';
 
         /*document.querySelector(".info .room").innerHTML = endRoom;
         document.querySelector(".info .steps").innerHTML = pathDist;*/
@@ -291,6 +297,8 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
     this.hide = function() {
         document.querySelector('#map .navigator').style.display = 'none';
+        document.querySelector("#map .navigator-detail").style.display = 'none';
+        
         this_nav.clear();
     }
 

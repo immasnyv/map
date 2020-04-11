@@ -266,6 +266,8 @@ function MapHandler() {
        this.school.addEventListener('touchstart', this.lock, false);
        this.school.addEventListener('wheel', this.zoom, false);
 
+       this_mapHandler.school.addEventListener('touchmove', this_mapHandler.rotate, false);
+
        this.school.addEventListener('mouseup', this.release, false);
        this.school.addEventListener('touchend', this.release, false);
    }
@@ -279,7 +281,6 @@ function MapHandler() {
 
        if(e.button == 0 /*&& ev.currentTarget.contains(ev.target)ev.target === ev.currentTarget*/) {
            this_mapHandler.school.addEventListener('mousemove', this_mapHandler.rotate, false);
-           this_mapHandler.school.addEventListener('touchmove', this_mapHandler.rotate, false);           
 
            this_mapHandler.x0 = e.clientX;
            this_mapHandler.y0 = e.clientY;
@@ -326,7 +327,6 @@ function MapHandler() {
         this_mapHandler.x0 = this_mapHandler.y0 = null;
 
         this_mapHandler.school.removeEventListener('mousemove', this_mapHandler.rotate, false);
-        this_mapHandler.school.removeEventListener('touchmove', this_mapHandler.rotate, false);
    }
 
    this_mapHandler = this;

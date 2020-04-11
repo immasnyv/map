@@ -1,7 +1,8 @@
 function Classrooms(mapJSON, mapHandler, ghrabApi) {
     var update_active = true;
     var update;
-    var i = 0;
+    var mode = 0;
+    let avalaibleModes = ['subject', 'teacher', 'class'];
 
     this.init = function() {
         let slider = document.querySelector('#map .classrooms-selector .slider-input');
@@ -30,26 +31,38 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
                 slider.addEventListener("mousemove", followMouse);
             }
         });
-
         slider.addEventListener("mouseup", function(ev) {
             sliderText.style.setProperty('display', 'none');
             slider.removeEventListener('mousemove', followMouse, false);
         });
-
         slider.addEventListener("input", function(ev) {
             sliderText.innerHTML = 'Hodina: ' + this.value;
-        });
-        
+        });        
         slider.addEventListener("change", function(ev) {
-            this_rooms.showRooms('subject', this_rooms.date, this_rooms.lesson = this.value);
+            this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, this_rooms.lesson = this.value);
             this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
+        });
+
+        let plusButton = document.querySelector('#map .classrooms-selector .plus');
+        let minusButton = document.querySelector('#map .classrooms-selector .minus');
+        plusButton.addEventListener("click", function(ev) {
+            if(this_rooms.lesson + 1 <= 10) {
+                this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, ++this_rooms.lesson);
+                this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
+            }
+        });
+        minusButton.addEventListener("click", function(ev) {
+            if(this_rooms.lesson - 1 >= 1) {
+                this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, --this_rooms.lesson);
+                this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
+            }
         });
 
         let arrows = [].slice.call(document.querySelectorAll('#map .classrooms-selector .arrow'));
         arrows.forEach(function(arrow) {
             arrow.addEventListener("click", function(ev) {
                 this_rooms.date.setDate(this_rooms.date.getDate() + (this.classList.contains('arrow__back') ? (-1) : +1));
-                this_rooms.showRooms('subject', this_rooms.date, this_rooms.lesson);
+                this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, this_rooms.lesson);
                 this_rooms.updateDateInInfo(classroomsInfo, this_rooms.date);
             });
         });
@@ -71,9 +84,8 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         viewButtonInputs.forEach(function(input) {
             input.addEventListener("change", function(ev) {
                 if(input.checked) {
-                    console.log('changed');
-                    let avalaibleModes = ['subject', 'teacher', 'class'];
-                    this_rooms.refresh(avalaibleModes[viewButtonInputs.indexOf(input)]);
+                    mode = viewButtonInputs.indexOf(input);
+                    this_rooms.refresh(avalaibleModes[mode]);
                 }
             });
         });
@@ -83,7 +95,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
             this_rooms.date = new Date();
             this_rooms.lesson = ghrabApi.getLessonFromTime(this_rooms.date);
 
-            this_rooms.showRooms('subject', this_rooms.date, this_rooms.lesson);
+            this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, this_rooms.lesson);
 
             let sliderBBox = slider.getBoundingClientRect();
             sliderText.style.setProperty('top', sliderBBox.top + 'px');
@@ -145,14 +157,15 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
     }
 
     this.updateClassrooms = function() {
-        let avalaibleModes = ['subject', 'teacher', 'class'];
         let viewButtonInputs = [].slice.call(document.querySelectorAll('#map .classrooms-selector .view-selection input'));
-        viewButtonInputs[i].checked = true;
+        viewButtonInputs[mode].checked = true;
 
-        let mode = avalaibleModes[i];
-        if(++i > 2) i = 0;
+        let actualMode = avalaibleModes[mode];
+        if(++mode > avalaibleModes.length - 1) {
+            mode = 0;
+        }
 
-        this_rooms.refresh(mode);
+        this_rooms.refresh(actualMode);
     }
     
     this.refresh = function(mode) {
@@ -252,8 +265,9 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
     this.show = function() {
         document.querySelector('#map .classrooms-selector').style.display = 'flex';
 
-        if(update_active) {
-            this_rooms.updateClassrooms();
+        this_rooms.updateClassrooms();
+
+        if(update_active) {            
             update = setInterval(this_rooms.updateClassrooms, 5000);
         }
     }

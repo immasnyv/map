@@ -182,15 +182,12 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
     this.hide = function() {
         this_staff.clear(lastClickedPinRoom);
 
-        mapHandler.resetLevelsTransparency();
         document.querySelector('#map #list-panel').style.display = 'none';
         document.querySelector('#map .school').style.transform = '';
     }
 
     this.show = function() {
         document.querySelector('#map #list-panel').style.display = 'flex';
-        mapHandler.makeLevelTransparent(1);
-        mapHandler.makeLevelTransparent(2);
 
         let dims = document.querySelector('#map #list-panel').getBoundingClientRect();
         document.querySelector('#map .school').style.transform = 'translateX(-' + dims.width/2 +'px)';
