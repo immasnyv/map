@@ -8,8 +8,9 @@ body {
 /***************/
 
 #map {
+	--vh: 100vh;
 	--map-width: 100vw;
-	--map-height: 100vh;
+	--map-height: var(--vh);
 	--map-rotateX: 68deg;
 	--map-rotateZ: -30deg;
 	--map-min-dim: var(--map-height);
@@ -52,10 +53,10 @@ body {
 }
 
 #map button,input {
-	font-family:inherit;
-	font-size:100%;
-	margin:0;
-	line-height:normal;
+	font-family: inherit;
+	font-size: 100%;
+	margin: 0;
+	line-height: normal;
 }
 
 #map button[disabled], #map input[disabled] {
@@ -69,6 +70,8 @@ body {
 		--level-width: calc(var(--map-min-dim) * 0.9);
 		--level-margin-left: calc(0px - var(--map-min-dim) * 0.4);
 		--level-margin-top: calc(0px - var(--map-min-dim) * 0.25);
+
+		font-size: 80%;
 	}
 }
 
@@ -89,13 +92,13 @@ body {
 	left: 0;
 	top: 0;
 
-	height: 100%;
+	/*height: 100%;*/
 
 	display: flex;
 	flex-flow: column nowrap;
 	justify-content: flex-start;
 
-	background:	-moz-linear-gradient(
+	/*background:	-moz-linear-gradient(
 		left ,
 		#00000025 0%,
 		#00000010 25px,
@@ -107,7 +110,7 @@ body {
 		#00000025 0%,
 		#00000010 25px,
       	#00000000 50px
-    );
+    );*/
 }
 
 #map .mode-list input {
@@ -172,11 +175,6 @@ body {
 	z-index: 0;
 
 	user-select: none;
-	
-	-webkit-transition: transform 0.2s, opacity 0.3s;
-	transition: transform 0.2s, opacity 0.3s;
-	-webkit-transition-timing-function: cubic-bezier(.23,1,.32,1); /* quintic ease out*/
-	transition-timing-function: cubic-bezier(.23,1,.32,1);
 }
 
 #map .mode-item svg:hover + .mode-text {
@@ -186,49 +184,65 @@ body {
 
 /*-----------------*/
 
-#map .mode-color {
-	margin: auto 0 24px 24px;
+#map .theme-list {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+
+	margin: 0 0 20px 24px;
 }
 
-#map .mode-color label {
+@media only screen and (orientation: portrait) and (max-width: 720px) {
+	#map .theme-list {
+		margin: 0 0 20px 12px;
+	}
+}
+
+#map .theme-list input {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+#map .theme-list label {
 	display: block;
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
+	margin-top: -5px;
 
-	opacity: 0.6;
-	
+	opacity: 0.6;	
 	cursor: pointer;
 }
 
-#map .mode-color label:hover {
+#map .theme-list label:hover {
 	opacity: 1;
 	width: 28px;
 	height: 28px;
 }
 
-#map .mode-color input:checked + label {
+#map .theme-list input:checked + label {
 	border: 4px solid #00000050;
 	width: 20px;
 	height: 20px;
 }
 
-#map .mode-color .green {
+#map .theme-list .green {
 	background: #4caf50;
 	color: #f1f1f1;
 }
 
-#map .mode-color .red {
+#map .theme-list .red {
 	background: #f50057;/*#be3e7a;*/
 	color: #f1f1f1;
 }
 
-#map .mode-color .blue {
+#map .theme-list .blue {
 	background: /*#1769aa*/	#2196f3;
 	color: #f1f1f1;
 }
 
-#map .mode-color .yellow {
+#map .theme-list .yellow {
 	background: #ffea00;
 	color: #211f07;
 }
@@ -304,7 +318,6 @@ body {
 	top: 180px;
 	left: 96px;
 
-	width: 100px;
 
 	font-size: 110%;
 	padding: 20px;
@@ -333,9 +346,14 @@ body {
 }
 
 @media only screen and (orientation: portrait) {
+	#map .navigator {
+		left: 86px;
+		padding: 15px;
+	}
+
 	#map .navigator-detail {
 		top: 24px;
-		left: 246px;
+		left: 226px;
 	}
 }
 
@@ -353,7 +371,7 @@ body {
 	background: white;
 
 	height: 100%;
-	width: 20%;
+	width: 15%;
 	min-width: 200px;
 	max-width: 350px;
 
@@ -361,11 +379,11 @@ body {
 	flex-direction: column;
 }
 
-/*@media  only screen and (max-width: 720px) {
-	#map .classrooms-selector {
-		width: 75%;
+@media only screen and (orientation: portrait) {
+	#map #list-panel {
+		width: 100%;
 	}
-}*/
+}
 
 #map #list-panel input {
 	width: 100%;
@@ -404,6 +422,38 @@ body {
 
 #map #list-places li .room {
 	float:right;
+}
+
+#map .list-button {
+	position: absolute;
+	right: 0;
+	top: 0;
+
+	display: none;
+}
+
+#map .list-button svg {
+	stroke: var(--map-text-color);
+	stroke-width: 4px;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	background: var(--map-primary-color);
+
+	border-radius: 50%;
+	padding: 12px;
+
+	margin-top: 24px;
+	margin-right: 24px;
+
+	width: 24px;
+	height: 24px;
+
+	cursor: pointer;
+	box-shadow: 1px 2px 2px #00000050;
+}
+
+#map .list-button svg:hover {
+	background: var(--map-dark-primary-color);
 }
 
 /***************/
@@ -804,30 +854,22 @@ body {
 	fill: #d7d7dc;
     fill-opacity:1;
 
-    stroke: #bbbbbb;
-    stroke-width:8;
+    stroke: #aaa9a9;
+    stroke-width:6;
     stroke-linecap:round;
     stroke-linejoin:round;
     stroke-opacity:1;
     stroke-miterlimit:4;
 }
 
-#map .level--current .map__ground {
-	stroke: #a6a3a8;
-}
-
-#map .map__tree {
-	fill: #7bad7f;
-}
-
 #map .map__space {
 	-webkit-transition: fill-opacity 0.2s, fill 0.2s, stroke 0.2s;
 	transition: fill-opacity 0.2s, fill 0.2s, stroke 0.2s;
-	fill: #bdbdbd;
+	fill: #b9b6b6;
 	fill-opacity: 0.7;
 
-    stroke: #bbb;
-    stroke-width:3;
+    stroke: #aaa9a9;
+    stroke-width:2;
     stroke-linecap:round;
     stroke-linejoin:round;
     stroke-opacity:1;
@@ -843,10 +885,8 @@ body {
 }
 
 #map .map__stairs {
-    stroke: #bbb;
-    stroke-width:1;
-    stroke-linecap:round;
-    stroke-linejoin:round;
+    stroke: rgb(177, 177, 177);
+    stroke-width:2;
     stroke-opacity:1;
     stroke-miterlimit:2;
 }
@@ -929,19 +969,23 @@ body {
 	transform-style: preserve-3d;
 }*/
 
+/*#map .pinates {
+	-webkit-perspective: 0;
+	perspective: 0;
+	-webkit-perspective-origin: 50% 50%;
+	perspective-origin: 50% 50%;
+}*/
+
 #map .pin {
 	position: absolute;
 	width: calc(var(--map-min-dim) * 0.055);
 	height: calc(var(--map-min-dim) * 0.0825);
 	margin: calc(0px - var(--map-min-dim) * 0.0825) 0 0 calc(0px - var(--map-min-dim) * 0.0225); /* let the bottom tip be the reference point for individual coordinates */
 	
-
 	-webkit-transform: rotateZ(calc(0deg - (var(--map-rotateZ) + var(--y)))) rotateX(0deg - (calc(var(--map-rotateX) + var(--x))));/*rotateX(-68deg) rotateZ(30deg);*/
 	transform: rotateZ(calc(0deg - (var(--map-rotateZ) + var(--y)))) rotateX(calc(0deg - (var(--map-rotateX) + var(--x))));/*rotateX(-68deg) rotateZ(30deg);*/
 	-webkit-transform-origin: 50% 100%;
 	transform-origin: 50% 100%;
-	-webkit-transform-style: preserve-3d;
-	transform-style: preserve-3d;
 
 	opacity:1;
 
@@ -1038,5 +1082,5 @@ body {
 }
 
 #map .transparent {
-	opacity: 0.55;
+	opacity: 0.6;
 }

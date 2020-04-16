@@ -74,7 +74,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         }
         
         let pathSteps = pathDistance * 1.43; // 1.43 steps = 1 meter
-        let pathTime = pathSteps / 1.3; // 1.3 steps/s (~ 3 km/h ~ 1 m/s)
+        let pathTime = pathSteps / 2; // 2 steps/s (~ 4 km/h ~ 1 m/s)
 
         console.log(this.nodeChain);
         console.log("Distance: " + pathDistance);
@@ -107,8 +107,8 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             mapHandler.makeLevelTransparent(this_nav.endNode.level);
         }*/
 
-        // highlight start room
-        mapHandler.highlightRoom(this_nav.startNode.room);
+        mapHandler.showRoom(this_nav.startNode.room, 'var(--map-primary-color)');
+        mapHandler.writeOnRoom(this_nav.startNode.room, this_nav.startNode.level, this_nav.startNode.room, 'map__text');
 
         // show here pin with hint
         mapHandler.showHerePin(this_nav.startNode);
@@ -233,9 +233,8 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         this_nav.canvas[this_nav.currentLevel - 1].arc(this_nav.endNode.x, 800 - this_nav.endNode.y, 10, 0, 2 * Math.PI, 0); // make target dot
         this_nav.canvas[this_nav.currentLevel - 1].stroke();
 
-        /* TIP: přidat do pinu ikonku funkce místnosti */
-        // highlight target room
-        mapHandler.highlightRoom(this_nav.endNode.room);
+        mapHandler.showRoom(this_nav.endNode.room, 'var(--map-primary-color)');
+        mapHandler.writeOnRoom(this_nav.endNode.room, this_nav.endNode.level, this_nav.endNode.room, 'map__text');
 
         mapHandler.showTargetPin(this_nav.endNode);
         mapHandler.showTargetHint(this_nav.endNode.level - 1);
@@ -291,8 +290,8 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         this.clearCanvas();
         mapHandler.removePins(this.startNode, this.endNode);
 
-        mapHandler.unhighlightRoom(this.startNode.room);
-        mapHandler.unhighlightRoom(this.endNode.room);
+        mapHandler.deleteTextOnRooms('map__text');        
+        mapHandler.unshowRooms();
     }
 
     this.hide = function() {

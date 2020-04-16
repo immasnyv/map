@@ -156,7 +156,7 @@ function MapHandler() {
    
    //******  Svg map handling ******
 
-   this.highlightRoom = function(room) {
+   /*this.highlightRoom = function(room) {
        let roomEl = document.getElementById(room);
        if (roomEl) {
            roomEl.classList.add('room--highlight');
@@ -168,7 +168,7 @@ function MapHandler() {
        if (roomEl) {
            roomEl.classList.remove('room--highlight');
        }
-   }
+   }*/
 
    this.showRoom = function(room, color) {
        let roomEl = document.getElementById(room);
@@ -266,7 +266,7 @@ function MapHandler() {
        this.school.addEventListener('touchstart', this.lock, false);
        this.school.addEventListener('wheel', this.zoom, false);
 
-       this_mapHandler.school.addEventListener('touchmove', this_mapHandler.rotate, false);
+       this.school.addEventListener('touchmove', this.rotate, false);
 
        this.school.addEventListener('mouseup', this.release, false);
        this.school.addEventListener('touchend', this.release, false);
@@ -279,11 +279,8 @@ function MapHandler() {
    this.lock = function(ev) {
        let e = this_mapHandler.getE(ev);
 
-       if(e.button == 0 /*&& ev.currentTarget.contains(ev.target)ev.target === ev.currentTarget*/) {
+       if(e.button == 0) {
            this_mapHandler.school.addEventListener('mousemove', this_mapHandler.rotate, false);
-
-           this_mapHandler.x0 = e.clientX;
-           this_mapHandler.y0 = e.clientY;
        } else if(e.button == 1) {
            this_mapHandler.rotX = 0;
            this_mapHandler.rotY = 0;
@@ -293,6 +290,9 @@ function MapHandler() {
            this_mapHandler.scaleZ = 1;
            this_mapHandler.schoolLevelsEl.style.setProperty('--z', '1');
        }
+
+       this_mapHandler.x0 = e.clientX;
+       this_mapHandler.y0 = e.clientY;
    }
 
    this.Ax = 0.25;

@@ -6,6 +6,11 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
 
     this.init = function() {
         this_staff.showStaffList();
+
+        let showButton = document.querySelector('#map .list-button');
+        showButton.addEventListener("click", function(ev) {
+            document.querySelector('#map #list-panel').style.display = 'flex';
+        });
     }
 
     this.showStaffList = function() {
@@ -31,8 +36,12 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
             var name = space.children[0].innerHTML;
             var spaceRoom = space.children[1].innerHTML;
 
-            if(spaceRoom !== undefined) {
+            if(spaceRoom !== '') {
                 space.addEventListener("click", function(ev) {
+                    if(window.matchMedia("(orientation: portrait)").matches) {
+                        document.querySelector('#map #list-panel').style.display = 'none';
+                    }
+
                     this_staff.clear(lastClickedPinRoom);
 
                     mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
@@ -64,6 +73,10 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
 
             if(spaceRoom !== '') {
                 space.addEventListener("click", function(ev) {
+                    if(window.matchMedia("(orientation: portrait)").matches) {
+                        document.querySelector('#map #list-panel').style.display = 'none';
+                    }
+
                     this_staff.clear(lastClickedPinRoom);
 
                     mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
@@ -183,14 +196,21 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
         this_staff.clear(lastClickedPinRoom);
 
         document.querySelector('#map #list-panel').style.display = 'none';
+        document.querySelector('#map .list-button').style.display = 'none';
         document.querySelector('#map .school').style.transform = '';
     }
 
     this.show = function() {
-        document.querySelector('#map #list-panel').style.display = 'flex';
+        if(window.matchMedia("(orientation: landscape)").matches) {
+            document.querySelector('#map #list-panel').style.display = 'flex';
+            document.querySelector('#map .list-button').style.display = 'none';
 
-        let dims = document.querySelector('#map #list-panel').getBoundingClientRect();
-        document.querySelector('#map .school').style.transform = 'translateX(-' + dims.width/2 +'px)';
+            let dims = document.querySelector('#map #list-panel').getBoundingClientRect();
+            document.querySelector('#map .school').style.transform = 'translateX(-' + dims.width/2 +'px)';
+        } else {
+            document.querySelector('#map #list-panel').style.display = 'none';
+            document.querySelector('#map .list-button').style.display = 'initial';
+        }
     }
 
     this_staff = this;

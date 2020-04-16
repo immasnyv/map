@@ -46,12 +46,14 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         let plusButton = document.querySelector('#map .classrooms-selector .plus');
         let minusButton = document.querySelector('#map .classrooms-selector .minus');
         plusButton.addEventListener("click", function(ev) {
+            this_rooms.lesson = ghrabApi.getLessonNumber(this_rooms.lesson);
             if(this_rooms.lesson + 1 <= 10) {
                 this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, ++this_rooms.lesson);
                 this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
             }
         });
         minusButton.addEventListener("click", function(ev) {
+            this_rooms.lesson = ghrabApi.getLessonNumber(this_rooms.lesson);
             if(this_rooms.lesson - 1 >= 1) {
                 this_rooms.showRooms(avalaibleModes[mode], this_rooms.date, --this_rooms.lesson);
                 this_rooms.updateLessonInInfo(classroomsInfo, this_rooms.lesson);
