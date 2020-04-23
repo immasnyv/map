@@ -78,43 +78,6 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
 
     // Function called from API - Data NOT received -> we are screwed up - nothing happens
     this.showStaffListError = function() {
-        let values = [];
-        for(let teacher in staffJSON.staff) {
-            values.push(staffJSON.staff[teacher].surname + ' ' + staffJSON.staff[teacher].firstname + ',' + staffJSON.staff[teacher].room);
-        }
-        values.sort(function (a,b) {
-            return a.localeCompare(b, 'cz');
-        });
-
-        let teacherList = document.querySelector('#map .list-panel .list');
-        teacherList.innerHTML = '';
-        for(let item in values) {
-            let parts = values[item].split(',');
-            let namePart = '<span class="name">' + parts[0] + '</span>';
-            let roomPart = '<span class="room">' + ((parts[1] === 'null') ? '' : parts[1]) + '</span>';
-
-            teacherList.innerHTML += '<li>' + namePart + roomPart + '</li>';
-        }
-
-        let spaces = [].slice.call(document.querySelectorAll('.list > li'));                
-        spaces.forEach(function(space) {
-            var name = space.children[0].innerHTML;
-            var spaceRoom = space.children[1].innerHTML;
-
-            if(spaceRoom !== '') {
-                space.addEventListener("click", function(ev) {
-                    if(window.matchMedia("(orientation: portrait)").matches) {
-                        document.querySelector('#map .list-panel').style.display = 'none';
-                    }
-
-                    this_staff.clear(lastClickedPinRoom);
- 
-                    mapHandler.showRoom(spaceRoom, 'var(--map-primary-color)');
-                    mapHandler.writeOnRoom(spaceRoom, mapJSON[spaceRoom].level, spaceRoom, "map__text");
-                    this_staff.showCurrentPosition(name, spaceRoom);
-                });
-            }
-        });
     };
 
     // Get data about schedule from the Ghrab API
@@ -178,38 +141,6 @@ function Staff(mapJSON, mapHandler, ghrabApi) {
             lastClickedPinRoom = this_staff.room;
 
             return;
-        }
-
-        // let's show demo at least -->
-        let rooms = schedule;
-        let found = false;
-
-        for(var room in rooms) {
-            if(rooms[room].teacher_name == this_staff.name) {
-                let roomInt = parseInt(room);
-                let node = mapJSON[roomInt];
-
-                mapHandler.showTargetPin(node);
-                mapHandler.setTargetHintText(node.level - 1, this_staff.name);
-                mapHandler.showTargetHint(node.level - 1);
-
-                mapHandler.showRoom(roomInt, ghrabApi.toColor(rooms[room].subject_color));
-                mapHandler.writeOnRoom(roomInt, node.level, rooms[room].class, "map__text");
-
-                lastClickedPinRoom = roomInt;
-                found = true;
-                break;
-            }
-        }
-
-        if(!found) {
-            let node = mapJSON[this_staff.room];
-
-            mapHandler.showTargetPin(node);
-            mapHandler.setTargetHintText(node.level - 1, this_staff.name);
-            mapHandler.showTargetHint(node.level - 1);
-
-            lastClickedPinRoom = this_staff.room;
         }
     };
 

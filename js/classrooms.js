@@ -131,7 +131,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
                 update_active = true;
             }
         });
-    }
+    };
 
     // Updates Lesson number (or text) in the info panel (above slider)
     this.updateLessonInInfo = function(infoBar, lesson) {
@@ -143,7 +143,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         } else {
             revert.style.display = 'none';
         }
-    }
+    };
 
     // Updates Date in the info panel (above slider)
     this.updateDateInInfo = function(infoBar, date) {
@@ -158,7 +158,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         } else {
             revert.style.display = 'none';
         }
-    }
+    };
 
     // This function is called every 5s in order to change type (mode) of label on rooms on map
     this.updateClassrooms = function() {
@@ -171,12 +171,12 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         }
 
         this_rooms.refresh(actualMode);
-    }
+    };
     
     // The same as showRooms with date and lesson not changed
     this.refresh = function(mode) {
         this.showRooms(mode, this_rooms.date, this_rooms.lesson);
-    }
+    };
 
     // Initiates process of showing rooms based on received json
     this.showRooms = function(mode, date, lesson) {        
@@ -189,7 +189,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
 
         this_rooms.mode = mode;
         ghrabApi.getSchedule(this_rooms.showRoomsOk, this_rooms.showRoomsError, date, lesson);
-    }
+    };
     
     // Function called from API - Data received -> call func to display them
     this.showRoomsOk = function(data) {
@@ -209,7 +209,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
             playBut.style.display= 'initial';
             pauseBut.style.display= 'none';
         }
-    }
+    };
 
     // Function called from API - Data NOT received -> nothing happens
     this.showRoomsError = function(error) {
@@ -229,11 +229,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
             this_rooms.clear();
             return;
         }
-
-        // let's show demo at least -->
-        this_rooms.clear();
-        this_rooms.indicateRooms(schedule, this_rooms.mode);
-    }
+    };
 
     // Loops in rooms and indicates rooms on map based on rooms (var)
     this.indicateRooms = function(rooms, mode) {  
@@ -245,13 +241,13 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
             mapHandler.showRoom(parseInt(room), ghrabApi.toColor(rooms[room].subject_color));
             mapHandler.writeOnRoom(parseInt(room), mapJSON[parseInt(room)].level, rooms[room][mode], "map__text");
         });
-    }
+    };
 
     // Clear used rooms in map
     this.clear = function() {
         mapHandler.deleteTextOnRooms('map__text');        
         mapHandler.unshowRooms();
-    }
+    };
 
     // Exit this mode
     this.hide = function() {
@@ -261,7 +257,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         if(update_active) {
             clearInterval(update);
         }
-    }
+    };
 
     // Enter this mode
     this.show = function() {
@@ -272,7 +268,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         if(update_active) {            
             update = setInterval(this_rooms.updateClassrooms, 5000);
         }
-    }
+    };
 
     this_rooms = this;
 
