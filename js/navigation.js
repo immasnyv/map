@@ -4,7 +4,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
     this.init = function(color) {
         this.initCanvas(color);
         this.initNavigation();
-    }
+    };
 
     // ******  Canvas handling functions  ******
 
@@ -24,14 +24,14 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             this.canvas[i].strokeStyle = color;
             this.canvas[i].beginPath();
         }
-    }
+    };
 
     this.clearCanvas = function() {
         for (let i = 0; i <= 2; i++) {
             this.canvas[i].clearRect(0, 0, 1200, 800);
             this.canvas[i].beginPath();
         }
-    }
+    };
 
     
     // ******  Path finding algorithm  ******
@@ -82,33 +82,35 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         console.log("Time: " + pathTime);
 
         return {distance: Math.round(pathDistance), steps: Math.round(pathSteps), time: Math.round(pathTime)};
-    }
+    };
 
     // ******  Path drawing functions  ******
 
-    this.ANIM_SPEED = 256;//192;
+    // ---------------- Phase of preparation
+    this.ANIM_SPEED = 300; // speed of anim - px/s
     this.REND_FPS = 60; // fps - default value
+    var running = false;
 
+    // 1. Init vars
     this.initNavigation = function() {
         this.currentLevel = this.startNode.level;
         this.nodeChainIndex = 1;
         this.lineIndex = 0;
         this.lineWaypoints = [];
+    };
 
-        //mapHandler.resetLevelsTransparency();
-    }
-
+    // 2. Show here pin and fill in info dialog
     this.startNavigation = function() {
-        // make level above startNode/endNode's level transparent if there's chance that the path and/or here/target pin couldn't be seen throught it
-        /*if (/this_nav.startNode.y > 510 &&/ this_nav.startNode.level < 3) {
-            mapHandler.makeLevelTransparent(this_nav.startNode.level);
-        }
-        if (/this_nav.endNode.y > 510 &&/ this_nav.endNode.level < 3) {
-            mapHandler.makeLevelTransparent(this_nav.endNode.level);
-        }*/
+        let path = this.computePath();
+        document.querySelector("#map .navigator-detail .navigator-distance").innerHTML = path.distance;
+        document.querySelector("#map .navigator-detail .navigator-steps").innerHTML = path.steps;
+        document.querySelector("#map .navigator-detail .navigator-time").innerHTML = path.time;
+        document.querySelector("#map .navigator-detail").style.display = 'initial';
 
-        mapHandler.showRoom(this_nav.startNode.room, 'var(--map-primary-color)');
-        mapHandler.writeOnRoom(this_nav.startNode.room, this_nav.startNode.level, this_nav.startNode.room, 'map__text');
+        if(document.getElementById(this_nav.startNode.room) != null && !document.getElementById(this_nav.startNode.room).matches('.map__special')) {
+            mapHandler.showRoom(this_nav.startNode.room, 'var(--map-primary-color)');
+            mapHandler.writeOnRoom(this_nav.startNode.room, this_nav.startNode.level, this_nav.startNode.room, 'map__text');
+        }
 
         // show here pin with hint
         mapHandler.showHerePin(this_nav.startNode);
@@ -118,9 +120,10 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             mapHandler.removeHereHint(this_nav.startNode.level - 1);
             this_nav.startPathDrawing();
             this_nav.runNavigation();
-        }, 1500);
-    }
+        }, 1000);
+    };
 
+    // 3. Controls the drawing the paths and determinates end
     this.runNavigation = function() {
         this_nav.t1 = performance.now();
 
@@ -130,7 +133,7 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         }
 
         this_nav.drawPathPoint();
-    }
+    };
 
     // Start drawing the path. Draw start dot and then move cursor to startNode.
     this.startPathDrawing = function() {
@@ -140,18 +143,15 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
         this.line = { linePosition: 0 };
         this_nav.t0 = null;
-    }
+    };
 
-    // ----------------
-
-    this.easeInOutCubic = function(t) {
-        return (t < 0.5) ? (2 * t * t) : (-1 + (4 - 2 * t) * t);
-    }
+    // ---------------- Phase of drawing
 
     this.easeInOutSine = function(t) {
         return -0.5 * (Math.cos(Math.PI * t) - 1);
-    }
+    };
 
+    // 4. Actual drawing of path
     this.drawPathPoint = function() {
         if(this_nav.t0 != null && this_nav.t1 != null) {
             this_nav.REND_FPS = 1000 / (this_nav.t1 - this_nav.t0);
@@ -225,30 +225,32 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             setTimeout(this_nav.runNavigation, 500);
             this_nav.t0 = null;
         }
-    }
+    };
 
-    //----------
+    // ---------------- Phase of end
 
+    // 5. Shows target pin and calls listener
     this.endPathDrawing = function() {
         this_nav.canvas[this_nav.currentLevel - 1].arc(this_nav.endNode.x, 800 - this_nav.endNode.y, 10, 0, 2 * Math.PI, 0); // make target dot
         this_nav.canvas[this_nav.currentLevel - 1].stroke();
 
-        mapHandler.showRoom(this_nav.endNode.room, 'var(--map-primary-color)');
-        mapHandler.writeOnRoom(this_nav.endNode.room, this_nav.endNode.level, this_nav.endNode.room, 'map__text');
+        if(document.getElementById(this_nav.endNode.room) != null && !document.getElementById(this_nav.endNode.room).matches('.map__special')) {
+            mapHandler.showRoom(this_nav.endNode.room, 'var(--map-primary-color)');
+            mapHandler.writeOnRoom(this_nav.endNode.room, this_nav.endNode.level, this_nav.endNode.room, 'map__text');
+        }
 
+        mapHandler.setTargetHintText(this_nav.endNode.level - 1, this_nav.endNode.room);
         mapHandler.showTargetPin(this_nav.endNode);
         mapHandler.showTargetHint(this_nav.endNode.level - 1);
 
         setTimeout(() => {this_nav.listener()}, 1000);
-
-        /*setTimeout(function() {
-            mapHandler.removeTargetHint(this_nav.endNode.level - 1);
-        }, 1500);*/
-    }
+        running = false;
+    };
 
     // ******  Main control functions  ******
     this.listener = function(val) {};
 
+    // Start the whole navigation process
     this.navigate = function(endRoom, startRoom=0) {
         let startRoomInfo = mapJSON[startRoom] || null;        
         let endRoomInfo = mapJSON[endRoom] || null;
@@ -257,32 +259,23 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
             return -1;
         }
 
+        running = true;
+
         this.startNode = {name: "<" + startRoomInfo.level, x: startRoomInfo.x, y: startRoomInfo.y, level: startRoomInfo.level, room: startRoom};
         this.endNode = {name: ">" + endRoomInfo.level, x: endRoomInfo.x, y: endRoomInfo.y, level: endRoomInfo.level, room: endRoom};
 
-        // configure start and end pins
-        mapHandler.setTargetHintText(this.endNode.level - 1, endRoom);
-
         this.init(mapHandler.getPrimaryColor());
-        let path = this.computePath();
-
-        document.querySelector("#map .navigator-detail .navigator-distance").innerHTML = path.distance;
-        document.querySelector("#map .navigator-detail .navigator-steps").innerHTML = path.steps;
-        document.querySelector("#map .navigator-detail .navigator-time").innerHTML = path.time;
-        document.querySelector("#map .navigator-detail").style.display = 'initial';
-
-        /*document.querySelector(".info .room").innerHTML = endRoom;
-        document.querySelector(".info .steps").innerHTML = pathDist;*/
-
         this.startNavigation();	
 
         return 0;
-    }
+    };
 
+    // Register a func that is called when the nav is over
     this.registerListener = function(listener) {
         this.listener = listener;
-    }
+    };
 
+    // Clear the map
     this.clear = function() {
         if(typeof this.startNode === 'undefined' || typeof this.endNode === 'undefined')
             return;
@@ -292,21 +285,25 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
         mapHandler.deleteTextOnRooms('map__text');        
         mapHandler.unshowRooms();
-    }
+    };
 
+    // Exit mode
     this.hide = function() {
         document.querySelector('#map .navigator').style.display = 'none';
         document.querySelector("#map .navigator-detail").style.display = 'none';
         
         this_nav.clear();
-    }
+    };
 
+    // Enter this mode
     this.show = function() {
         document.querySelector('#map .navigator').style.display = 'flex';
-    }
+    };
 
+    // ******  Functions of smart/graphical room picking ******
     var pickInput;
 
+    // Set up user watcher and enable him to pick a room
     this.startPickRoom = function(ev) {
         pickInput = ev.currentTarget;
         let rooms = [].slice.call(document.querySelectorAll('#map .map__space'));
@@ -316,8 +313,9 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
 
         let levelsEl = document.querySelector('#map .levels');
         levelsEl.addEventListener("mousedown", this_nav.roomClicked);
-    }
+    };
 
+    // Read picked room and disable user "clickability"
     this.roomClicked = function(ev) {
         let levelsEl = document.querySelector('#map .levels');
         levelsEl.removeEventListener("mousedown", this_nav.roomClicked);
@@ -329,8 +327,9 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         rooms.forEach(function(room) {
             room.style.setProperty('pointer-events', 'none');
         });
-    }
+    };
 
+    // Only disable user "clickability"
     this.endPickRoom = function(ev) {
         let levelsEl = document.querySelector('#map .levels');
         levelsEl.removeEventListener("mousedown", this_nav.roomClicked);
@@ -339,8 +338,9 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         rooms.forEach(function(room) {
             room.style.setProperty('pointer-events', 'none');
         });
-    }
+    };
 
+    // Init this mode's user interface
     this.initControls = function() {
         let startInput = document.querySelector("#map .navigator .input-start");
         let endInput = document.querySelector("#map .navigator .input-target");
@@ -360,7 +360,15 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         endInput.addEventListener("focusout", function(ev) {
             this_nav.endPickRoom(ev);
         });
-    }
+
+        let navDetailClear = document.querySelector("#map .navigator-detail .clear");
+        navDetailClear.addEventListener("click", function(ev) {
+            if(!running) {
+                this_nav.clear();
+                document.querySelector("#map .navigator-detail").style.display = 'none';
+            }
+        });
+    };
 
     this_nav = this;
     this.initControls();

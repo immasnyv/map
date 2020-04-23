@@ -23,7 +23,7 @@ function Djikstra() {
         node = previous[node];
       }
 
-      //gets the starting node in there as well if there was a path from it
+      // gets the starting node in there as well if there was a path from it
       if (dist[node] === 0) {
         path.push(node);
       }
@@ -49,11 +49,11 @@ function Djikstra() {
     while (Object.keys(q).length != 0) {
       var smallest = this.findSmallest(dist, q);
       var smallestNode = graph[smallest];
-      //searches for the node u in the node set Q that has the smallest dist[smallest] value.
+      // searches for the node u in the node set Q that has the smallest dist[smallest] value.
 
       for (var neighbour in smallestNode.neighbours) {
         var alt = dist[smallest] + smallestNode.neighbours[neighbour];
-        //smallestNode[neighbour] is the distance between smallest and neighbour
+        // smallestNode[neighbour] is the distance between smallest and neighbour
         if (alt < dist[neighbour]) {
           dist[neighbour] = alt;
           prev[neighbour] = smallest;

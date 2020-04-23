@@ -70,9 +70,9 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         });
 
         let viewSelector = document.querySelector('#map .classrooms-selector .view-selection');
-        let viewButton = document.querySelector('#map .classrooms-selector .view');
+        let viewButton = document.querySelector('#map .classrooms-selector .view-button');
         let viewSelectorState = false;
-        viewButton.addEventListener("click", function(ev) {
+        viewButton.addEventListener("change", function(ev) {
             if(viewSelectorState) {
                 viewSelector.style.display = 'none';
                 viewSelectorState = false;
@@ -133,6 +133,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         });
     }
 
+    // Updates Lesson number (or text) in the info panel (above slider)
     this.updateLessonInInfo = function(infoBar, lesson) {
         infoBar.querySelector('.lesson').innerHTML = lesson;
 
@@ -144,6 +145,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         }
     }
 
+    // Updates Date in the info panel (above slider)
     this.updateDateInInfo = function(infoBar, date) {
         let euroDate = date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
         infoBar.querySelector('.date').innerHTML = euroDate;
@@ -158,6 +160,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         }
     }
 
+    // This function is called every 5s in order to change type (mode) of label on rooms on map
     this.updateClassrooms = function() {
         let viewButtonInputs = [].slice.call(document.querySelectorAll('#map .classrooms-selector .view-selection input'));
         viewButtonInputs[mode].checked = true;
@@ -170,14 +173,13 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         this_rooms.refresh(actualMode);
     }
     
+    // The same as showRooms with date and lesson not changed
     this.refresh = function(mode) {
         this.showRooms(mode, this_rooms.date, this_rooms.lesson);
     }
 
-    this.showRooms = function(mode, date, lesson) {
-        /*let loader = document.querySelector('#map .loader');
-        loader.style.display = 'initial';*/
-        
+    // Initiates process of showing rooms based on received json
+    this.showRooms = function(mode, date, lesson) {        
         let pauseBut = document.querySelector('#map .classrooms-selector .pause_button');
         pauseBut.style.display= 'none';
         let playBut = document.querySelector('#map .classrooms-selector .play_button');
@@ -189,14 +191,12 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         ghrabApi.getSchedule(this_rooms.showRoomsOk, this_rooms.showRoomsError, date, lesson);
     }
     
+    // Function called from API - Data received -> call func to display them
     this.showRoomsOk = function(data) {
         this_rooms.clear();
         if(Object.keys(data).length != 0) {
             this_rooms.indicateRooms(data, this_rooms.mode);
         }
-
-        /*let loader = document.querySelector('#map .loader');
-        loader.style.display = 'none';*/
 
         let loader = document.querySelector('#map .classrooms-selector .loader--icon');
         loader.style.display = 'none';
@@ -211,10 +211,8 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         }
     }
 
+    // Function called from API - Data NOT received -> nothing happens
     this.showRoomsError = function(error) {
-        /*let loader = document.querySelector('#map .loader');
-        loader.style.display = 'none';*/
-
         let loader = document.querySelector('#map .classrooms-selector .loader--icon');
         loader.style.display = 'none';
         let pauseBut = document.querySelector('#map .classrooms-selector .pause_button');
@@ -234,13 +232,12 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
 
         // let's show demo at least -->
         this_rooms.clear();
-        this_rooms.indicateRooms(schedule, this_rooms.mode);        
+        this_rooms.indicateRooms(schedule, this_rooms.mode);
     }
 
+    // Loops in rooms and indicates rooms on map based on rooms (var)
     this.indicateRooms = function(rooms, mode) {  
         Object.keys(rooms).forEach(function(room) {
-            //console.log(room, rooms[room]);
-
             if(rooms[room].class === undefined || rooms[room].subject === undefined) {
                 return;
             }
@@ -250,11 +247,13 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         });
     }
 
+    // Clear used rooms in map
     this.clear = function() {
         mapHandler.deleteTextOnRooms('map__text');        
         mapHandler.unshowRooms();
     }
 
+    // Exit this mode
     this.hide = function() {
         this_rooms.clear();
         document.querySelector('#map .classrooms-selector').style.display = 'none';
@@ -264,6 +263,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
         }
     }
 
+    // Enter this mode
     this.show = function() {
         document.querySelector('#map .classrooms-selector').style.display = 'flex';
 
@@ -276,7 +276,7 @@ function Classrooms(mapJSON, mapHandler, ghrabApi) {
 
     this_rooms = this;
 
-    this.date = new Date();//('22 Mar 2020 12:15');
+    this.date = new Date();
     this.lesson = ghrabApi.getLessonFromTime(this.date);
     this.mode;
 

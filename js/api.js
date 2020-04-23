@@ -1,5 +1,6 @@
 function GhrabApi() {
-    this.getSchedule = function(callbackOk, callbackError, date = new Date('22 Mar 2020 12:15'), lesson) {
+    // Try to get schedule data from there -> calls appropriate callback
+    this.getSchedule = function(callbackOk, callbackError, date = new Date(), lesson) {
         if(isNaN(lesson)) {
             var lesson = this_api.getLessonFromTime(date);
             if(isNaN(lesson)) {
@@ -39,6 +40,7 @@ function GhrabApi() {
         xhr.send(data);
     }
 
+    // Try to get staff data from there -> calls appropriate callback
     this.getStaff = function(callbackOk, callbackError) {
         let url = 'https://is.ghrabuvka.cz/api/staff';
 
@@ -72,6 +74,7 @@ function GhrabApi() {
         xhr.send(data);
     }
 
+    // Change the random Ghrab API color to nice css rgb(x,x,x)
     this.toColor = function(num) {
         num >>>= 0;
         let r = num & 0xFF,
@@ -80,18 +83,8 @@ function GhrabApi() {
 
         return "rgb(" + [r, g, b].join(",") + ")";
     }
-
-    this.shadeColor = function(color, addition) {
-        color = color.substring(color.indexOf('(') + 1, color.indexOf(')'));
-        let rgb = color.split(',');
-
-        for(let i = 0; i < 3; i++) {
-            rgb[i] = Math.min(Math.max(parseInt(rgb[i]) + addition, 0), 255);
-        }
-
-        return "rgb(" + [rgb[0], rgb[1], rgb[2]].join(",") + ")";
-    }
-
+    
+    // Make the schedule url
     this.getURL = function(now, lesson) {
         // get current date in yyyymmdd -> 20200223
         let dd = String(now.getDate()).padStart(2, '0');
@@ -103,6 +96,7 @@ function GhrabApi() {
         return ('https://is.ghrabuvka.cz/api/schedule/' + date + '/' + lesson);
     }
 
+    // Hardcoded Ghrabuvka timetable
     this.timetable = [
         [07*60 + 00, 07*60 + 45], // 1
         [07*60 + 50, 08*60 + 35], // 2
@@ -116,6 +110,7 @@ function GhrabApi() {
         [15*60 + 00, 15*60 + 45]  // 10
     ];
 
+    // Get lesson num from given time -> if its breaktime or the school is closed -> return text
     this.getLessonFromTime = function(now) {
         let time = now.getHours() * 60 + now.getMinutes();
 
@@ -137,6 +132,7 @@ function GhrabApi() {
         return 'Po výuce';
     }
 
+    // Opposite to this.getLessonFromTime
     this.getTimeFromLesson = function(lesson) {
         if(!isNaN(lesson)) {
             return this_api.timetable[lesson - 1];
@@ -152,6 +148,7 @@ function GhrabApi() {
         return [this_api.timetable[this_api.timetable.length - 1][1], this_api.timetable[0][0]];
     }
 
+    // Get ONLY num from lesson text/num -> tries to get closest number
     this.getLessonNumber = function(lesson) {
         if(!isNaN(lesson)) {
             return lesson;
