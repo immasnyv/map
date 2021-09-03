@@ -258,6 +258,18 @@ function MapHandler() {
         text = 'Bufet';
         this.writeOnRoom(124, 1, text, "map__buffet_text");
 
+        text = 'Vchod';
+        this.writeOnRoom(1, 1, text, "map__buffet_text");
+        document.getElementById('1').style.fill = 'var(--map-primary-color)';
+
+        text = 'Řed';
+        this.writeOnRoom(102, 1, text, "map__buffet_text");
+        document.getElementById('102').style.fill = 'var(--map-primary-color)';
+
+        text = 'V';
+        this.writeOnRoom(3, 1, text, "map__buffet_text");
+        document.getElementById('3').style.fill = 'var(--map-primary-color)';
+
         this.makeLevelTransparent(1);
         this.makeLevelTransparent(2);
     };

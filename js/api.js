@@ -49,7 +49,7 @@ function GhrabApi() {
         data.append('secret', /*<?php echo '*/'El258dfktpd2HTR4UGfZLGLo2'/*';?>*/);
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', "../getURL.php", true);
+        xhr.open('POST', "getURL.php", true);
         xhr.timeout = 5000;
         xhr.responseType = 'json';
         xhr.onload = function() {

@@ -64,7 +64,7 @@
 										x="433.77725"
 										height="45.783695"
 										width="98.875397"
-										class="map__space"
+										class="map__space map__special"
 										id="1" />
 									<rect
 										height="87.18959"
@@ -78,7 +78,7 @@
 										width="22.156404"
 										y="518.15216"
 										x="383.6131"
-										class="map__space"
+										class="map__space map__special"
 										id="3" />
 									<rect
 										height="33.075485"
@@ -148,7 +148,7 @@
 										width="54.036724"
 										y="331.22986"
 										x="480.74527"
-										class="map__space"
+										class="map__space map__special"
 										id="102" />
 									<rect
 										height="41.235004"
@@ -1490,5 +1490,20 @@
 		<script src="js/api.js"></script>
 		
 		<script src="js/main.js"></script>
+		<?php
+            include "mysql.php";
+            $mysqli = openMySql();
+
+			$stmt = $mysqli->prepare("CREATE TABLE IF NOT EXISTS map_views (id int PRIMARY KEY AUTO_INCREMENT, time DATETIME DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(40), info VARCHAR(1024))");
+			$stmt->execute();
+            $stmt->close();
+            
+            $stmt2 = $mysqli->prepare("INSERT INTO map_views (ip, info) VALUES (?, ?)");
+            $stmt2->bind_param("ss", $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+            $stmt2->execute();
+            $stmt2->close();
+            
+            closeMySql($mysqli);         
+        ?>
 	</body>
 </html>

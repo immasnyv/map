@@ -46,6 +46,8 @@ function Navigation(mapJSON, mapNodesJSON, mapHandler) {
         // add >x end node to mNodeMap
         this.mNodeMap.addNodeByPosition(this_nav.endNode.name, this_nav.endNode.x, this_nav.endNode.y, this_nav.endNode.level);
 
+        console.log(this.mNodeMap.nodes);
+
         // calculate path using djikstra algorithm
         let djikstra = new Djikstra();
         let result = djikstra.calculate(this.mNodeMap.nodes, this_nav.startNode.name);
