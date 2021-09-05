@@ -1,7 +1,7 @@
 <?php
 
 function openMySql() {
-    $mysqli = new mysqli("localhost", "masny", "password", "masny");
+    $mysqli = new mysqli("localhost", "equulei", "********", "mapa");
     return $mysqli;
 }
 

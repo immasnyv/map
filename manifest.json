@@ -1,0 +1,57 @@
+{
+  "name": "Mapa Gymnázia Ostrava-Hrabůvka",
+  "short_name": "Mapa",
+  "icons": [
+    {
+      "src": "/images/logo64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": [
+    "map"
+  ],
+  "orientation": "portrait-primary",
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Tato aplikace slouží k orientaci na Gymnáziu Ostrava-Hrabůvka.",
+  "screenshots": [
+    {
+      "src": "/images/screenshots/1.jpeg",
+      "sizes": "1619x2776",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/images/screenshots/2.jpeg",
+      "sizes": "1619x2776",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/images/screenshots/3.jpeg",
+      "sizes": "1619x2776",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/images/screenshots/4.jpeg",
+      "sizes": "1619x2776",
+      "type": "image/jpeg"
+    }
+  ]
+}
